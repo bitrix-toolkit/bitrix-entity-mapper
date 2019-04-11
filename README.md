@@ -1,2 +1,4 @@
-# bitrix-entity-mapper
-Альтернативный ORM для Bitrix
+# Bitrix Entity Mapper
+
+Альтернативный ORM для Bitrix.
+
