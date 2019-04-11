@@ -15,16 +15,51 @@ final class InfoBlock
      * @var string
      * @Required
      */
-    public $type;
+    protected $type;
 
     /**
      * @var string
      * @Required
      */
-    public $code;
+    protected $code;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
+
+    /**
+     * InfoBlock constructor.
+     * @param array $values
+     */
+    public function __construct(array $values)
+    {
+        $this->type = isset($values['type']) ? $values['type'] : null;
+        $this->code = isset($values['code']) ? $values['code'] : null;
+        $this->name = isset($values['name']) ? $values['name'] : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }
