@@ -118,11 +118,19 @@ class EntityMap
     /**
      * @param string $code
      * @return PropertyMap
+     * @throws InvalidArgumentException
      */
     public function getProperty($code)
     {
-        return reset(array_filter($this->properties, function (PropertyMap $property) use ($code) {
+        /** @var PropertyMap $propertyMap */
+        $propertyMap = reset(array_filter($this->properties, function (PropertyMap $property) use ($code) {
             return $property->getCode() === $code;
         }));
+
+        if ($propertyMap instanceof PropertyMap) {
+            return $propertyMap;
+        }
+
+        throw new InvalidArgumentException("Свойство $code не объявлено в сущности.");
     }
 }
