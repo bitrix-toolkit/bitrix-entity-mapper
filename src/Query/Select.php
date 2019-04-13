@@ -37,6 +37,18 @@ class Select
     }
 
     /**
+     * @param string $class
+     * @return Select
+     * @throws AnnotationException
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     */
+    public static function from($class)
+    {
+        return new self($class);
+    }
+
+    /**
      * Может быть вызвано с двумя или тремя аргументами.
      *
      * Если 2 аргумента, то название свойства и значение для фильтрации.
@@ -69,12 +81,12 @@ class Select
 
     /**
      * @param string $p
-     * @param string $direction
+     * @param string $d
      * @return $this
      */
-    public function orderBy($p, $direction = 'asc')
+    public function orderBy($p, $d = 'asc')
     {
-        $this->orderBy[] = [$p, $direction];
+        $this->orderBy[$p] = $d;
         return $this;
     }
 
@@ -96,10 +108,20 @@ class Select
 
         self::assert(!empty($infoBlock['ID']), "Инфоблок с кодом $infoBlockCode и типом $infoBlockType не найден.");
 
-        $filter = ['IBLOCK_ID' => $infoBlock['ID']];
+        $filter = ['=IBLOCK_ID' => $infoBlock['ID']];
         foreach ($this->where as $entry) {
             list($property, $operator, $value) = $entry;
             $filter += $this->getFilterRow($property, $operator, $value);
+        }
+
+        $order = [];
+        foreach ($this->orderBy as $property => $direction) {
+            $propertyAnnotation = $this->entityMap->getProperty($property)->getAnnotation();
+            if ($propertyAnnotation instanceof Field) {
+                $order[$propertyAnnotation->getCode()] = $direction;
+            } elseif ($propertyAnnotation instanceof Property) {
+                $order['PROPERTY_' . $propertyAnnotation->getCode()] = $direction;
+            }
         }
 
         /** @var PropertyMap[] $fields */
@@ -114,7 +136,7 @@ class Select
 
         $classRef = new ReflectionClass($this->entityMap->getClass());
 
-        $rs = CIBlockElement::GetList(null, $filter);
+        $rs = CIBlockElement::GetList($order, $filter);
         while ($element = $rs->GetNextElement()) {
             $data = [];
 
@@ -149,6 +171,42 @@ class Select
             $object = $classRef->newInstance();
             yield self::hydrate($object, $data);
         }
+    }
+
+    /**
+     * @return object
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function fetch()
+    {
+        /** @var Generator $iterator */
+        static $iterator;
+
+        if (!isset($iterator)) {
+            $iterator = $this->iterator();
+        } else {
+            $iterator->next();
+        }
+
+        return $iterator->current();
+    }
+
+    /**
+     * @return object[]
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function fetchAll()
+    {
+        $array = [];
+        foreach ($this->iterator() as $object) {
+            $array[] = $object;
+        }
+
+        return $array;
     }
 
     /**
