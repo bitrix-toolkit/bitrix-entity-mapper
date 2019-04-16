@@ -23,6 +23,11 @@ class EntityMap
     protected $annotation;
 
     /**
+     * @var ReflectionClass
+     */
+    protected $reflection;
+
+    /**
      * @var PropertyMap[]
      */
     protected $properties;
@@ -31,12 +36,14 @@ class EntityMap
      * EntityMap constructor.
      * @param string $class
      * @param InfoBlock $annotation
+     * @param ReflectionClass $reflection
      * @param PropertyMap[] $properties
      */
-    public function __construct($class, InfoBlock $annotation, array $properties)
+    public function __construct($class, InfoBlock $annotation, ReflectionClass $reflection, array $properties)
     {
         $this->class = $class;
         $this->annotation = $annotation;
+        $this->reflection = $reflection;
         $this->properties = $properties;
     }
 
@@ -84,10 +91,10 @@ class EntityMap
 
             /** @var PropertyAnnotationInterface $propAnnotation */
             $propAnnotation = reset($propAnnotations);
-            $propertyMaps[] = new PropertyMap($propRef->getName(), $propAnnotation);
+            $propertyMaps[] = new PropertyMap($propRef->getName(), $propAnnotation, $propRef);
         }
 
-        $entityMap = new self($classRef->getName(), $classAnnotation, $propertyMaps);
+        $entityMap = new self($classRef->getName(), $classAnnotation, $classRef, $propertyMaps);
         return $entityMap;
     }
 
@@ -105,6 +112,14 @@ class EntityMap
     public function getAnnotation()
     {
         return $this->annotation;
+    }
+
+    /**
+     * @return ReflectionClass
+     */
+    public function getReflection()
+    {
+        return $this->reflection;
     }
 
     /**

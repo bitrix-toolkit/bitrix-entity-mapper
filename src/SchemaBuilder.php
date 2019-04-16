@@ -92,6 +92,11 @@ class SchemaBuilder
         }
     }
 
+    /**
+     * @param string $type
+     * @param string $code
+     * @return array
+     */
     protected static function getBitrixInfoBlock($type, $code)
     {
         return CIBlock::GetList(null, [

@@ -24,6 +24,9 @@ class Select
     protected $where = [];
     protected $orderBy = [];
 
+    /** @var Generator|null */
+    protected $iterator;
+
     /**
      * Select constructor.
      * @param string $class
@@ -91,12 +94,11 @@ class Select
     }
 
     /**
-     * @return Generator
-     * @throws ReflectionException
+     * @return Generator|RawResult[]
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function iterator()
+    public function rawIterator()
     {
         $infoBlockType = $this->entityMap->getAnnotation()->getType();
         $infoBlockCode = $this->entityMap->getAnnotation()->getCode();
@@ -134,8 +136,6 @@ class Select
             return $propertyMap->getAnnotation() instanceof Property;
         });
 
-        $classRef = new ReflectionClass($this->entityMap->getClass());
-
         $rs = CIBlockElement::GetList($order, $filter);
         while ($element = $rs->GetNextElement()) {
             $data = [];
@@ -168,8 +168,22 @@ class Select
                 );
             }
 
+            yield new RawResult($elementFields['ID'], $elementFields['IBLOCK_ID'], $data);
+        }
+    }
+
+    /**
+     * @return Generator
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function iterator()
+    {
+        $classRef = new ReflectionClass($this->entityMap->getClass());
+        foreach ($this->rawIterator() as $rawResult) {
             $object = $classRef->newInstance();
-            yield self::hydrate($object, $data);
+            yield self::hydrate($object, $rawResult->getData());
         }
     }
 
@@ -181,16 +195,13 @@ class Select
      */
     public function fetch()
     {
-        /** @var Generator $iterator */
-        static $iterator;
-
-        if (!isset($iterator)) {
-            $iterator = $this->iterator();
+        if (!isset($this->iterator)) {
+            $this->iterator = $this->iterator();
         } else {
-            $iterator->next();
+            $this->iterator->next();
         }
 
-        return $iterator->current();
+        return $this->iterator->current();
     }
 
     /**
@@ -237,7 +248,7 @@ class Select
             if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
                 $v = $value && $value !== 'N' ? 'Y' : 'N';
             } else {
-                $v = $value;
+                $v = $value !== '' && $value !== null ? $value : false;
             }
         } elseif ($propertyAnnotation instanceof Property) {
             if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
@@ -249,7 +260,7 @@ class Select
             if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
                 $v = $value && $value !== 'N' ? 'Y' : false;
             } else {
-                $v = $value;
+                $v = $value !== '' && $value !== null ? $value : false;
             }
         } else {
             throw new InvalidArgumentException(
