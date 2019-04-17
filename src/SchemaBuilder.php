@@ -179,6 +179,9 @@ class SchemaBuilder
             $isUpdated = $cIBlockProperty->Update($propId, $fields);
             self::assert($isUpdated, strip_tags($cIBlockProperty->LAST_ERROR));
         } else {
+            if ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+                $fields += ['VALUES' => [['XML_ID' => 'Y', 'VALUE' => 'Y', 'DEF' => 'N']]];
+            }
             $cIBlockProperty = new CIBlockProperty();
             $propId = $cIBlockProperty->Add($fields);
             self::assert($propId, strip_tags($cIBlockProperty->LAST_ERROR));

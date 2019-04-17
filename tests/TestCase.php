@@ -1,25 +1,22 @@
 <?php
 
-use Bitrix\Main\Application;
-use Bitrix\Main\Data\StaticHtmlCache;
-use Bitrix\Main\SystemException;
-use PHPUnit\Framework\TestCase as PhpUnitTestCase;
+namespace Sheerockoff\BitrixEntityMapper\Test;
 
-abstract class BitrixEntityMapperTestCase extends PhpUnitTestCase
+use Bitrix\Main\Data\StaticHtmlCache;
+use CIBlock;
+use CIBlockType;
+use PHPUnit\Framework\TestCase as PhpUnitTestCase;
+use RuntimeException;
+
+abstract class TestCase extends PhpUnitTestCase
 {
     /**
-     * @throws SystemException
+     * Исключает ошибки Bitrix при формировании
+     * запросов к базе данных.
+     *
+     * @var bool
      */
-    public static function initBitrixEnvironment()
-    {
-        // https://habr.com/ru/post/253561/
-        global $DB;
-        $app = Application::getInstance();
-        $con = $app->getConnection();
-        $DB->db_Conn = $con->getResource();
-
-        CModule::IncludeModule('iblock');
-    }
+    protected $backupGlobals = false;
 
     public static function clearBitrixCache()
     {
@@ -38,6 +35,10 @@ abstract class BitrixEntityMapperTestCase extends PhpUnitTestCase
         }
     }
 
+    /**
+     * @param string $type
+     * @throws RuntimeException
+     */
     public static function deleteInfoBlockType($type)
     {
         $exist = CIBlockType::GetByID($type)->Fetch();
@@ -49,6 +50,10 @@ abstract class BitrixEntityMapperTestCase extends PhpUnitTestCase
         }
     }
 
+    /**
+     * @param string $type
+     * @throws RuntimeException
+     */
     public static function addInfoBlockType($type)
     {
         $exist = CIBlockType::GetByID($type)->Fetch();
