@@ -1,0 +1,9 @@
+<phpunit bootstrap="tests/bootstrap.php">
+    <testsuites>
+        <testsuite>
+            <file>tests/BitrixEnvironmentTest.php</file>
+            <file>tests/EntityMapTest.php</file>
+            <file>tests/SchemaBuilderTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

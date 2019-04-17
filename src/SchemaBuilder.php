@@ -100,8 +100,8 @@ class SchemaBuilder
     protected static function getBitrixInfoBlock($type, $code)
     {
         return CIBlock::GetList(null, [
-            'TYPE' => $type,
-            'CODE' => $code,
+            '=TYPE' => $type,
+            '=CODE' => $code,
             'CHECK_PERMISSIONS' => 'N'
         ])->Fetch();
     }
