@@ -2,9 +2,11 @@
 
 namespace Sheerockoff\BitrixEntityMapper;
 
+use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlock;
 use CIBlockElement;
 use CIBlockProperty;
+use DateTime;
 use Doctrine\Common\Annotations\AnnotationException;
 use Exception;
 use InvalidArgumentException;
@@ -45,7 +47,10 @@ class EntityMapper
         $exist = self::getExistObjectRawResult($entityMap, $object);
 
         if ($exist && $exist->getId()) {
-            $changedData = array_diff_assoc($data, $exist->getData());
+            $changedData = array_udiff_assoc($data, $exist->getData(), function ($a, $b) {
+                return $a !== $b;
+            });
+
             if (!$changedData) {
                 return $exist->getId();
             }
@@ -209,6 +214,7 @@ class EntityMapper
      * @param int $infoBlockId
      * @return array
      * @throws InvalidArgumentException
+     * @throws Exception
      */
     protected static function getBitrixPropertyEntry(PropertyMap $propertyMap, array $data, $infoBlockId)
     {
@@ -223,7 +229,7 @@ class EntityMapper
         self::assert(array_key_exists($valueKey, $data), "Ключ $valueKey не найден в массиве.");
         $value = $data[$valueKey];
 
-        if ($propertyMap->getAnnotation()->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+        if ($propertyMap->getAnnotation()->getType() === Property::TYPE_BOOLEAN) {
             if ($value) {
                 $yesEnum = CIBlockProperty::GetPropertyEnum(
                     $propertyMap->getAnnotation()->getCode(),
@@ -242,6 +248,20 @@ class EntityMapper
                 );
 
                 $value = $yesEnum['ID'];
+            } else {
+                $value = false;
+            }
+        } elseif ($propertyMap->getAnnotation()->getType() === Property::TYPE_DATETIME) {
+            if ($value) {
+                if ($value instanceof DateTime) {
+                    $value = BitrixDateTime::createFromTimestamp($value->getTimestamp());
+                } elseif ($value instanceof BitrixDateTime) {
+                    // pass
+                } elseif (preg_match('/^\d+$/us', (string)$value)) {
+                    $value = BitrixDateTime::createFromTimestamp($value);
+                } else {
+                    $value = BitrixDateTime::createFromPhp(new DateTime($value));
+                }
             } else {
                 $value = false;
             }

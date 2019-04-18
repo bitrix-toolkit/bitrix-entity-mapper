@@ -44,4 +44,12 @@ class Book
      * @Field(code="ID", primaryKey=true)
      */
     protected $id;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

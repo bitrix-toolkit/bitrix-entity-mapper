@@ -22,7 +22,7 @@ final class SchemaBuilderTest extends TestCase
         self::deleteInfoBlocks();
         self::deleteInfoBlockType('entity');
         self::clearBitrixCache();
-        self::addInfoBlockType('entity');
+        self::addInfoBlockType('entity', 'Библиотека');
     }
 
     /**
@@ -102,5 +102,16 @@ final class SchemaBuilderTest extends TestCase
         $this->assertEquals('N', $properties['pages_num']['PROPERTY_TYPE']);
         $this->assertEmpty($properties['pages_num']['USER_TYPE']);
         $this->assertEquals('N', $properties['pages_num']['MULTIPLE']);
+    }
+
+    /**
+     * @depends testIsSchemaCorrect
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanRebuildSchemaCorrect()
+    {
+        $this->testCanBuildSchema();
+        $this->testIsSchemaCorrect();
     }
 }

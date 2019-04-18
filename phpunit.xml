@@ -4,6 +4,8 @@
             <file>tests/src/FunctionalTest/BitrixEnvironmentTest.php</file>
             <file>tests/src/FunctionalTest/EntityMapTest.php</file>
             <file>tests/src/FunctionalTest/SchemaBuilderTest.php</file>
+            <file>tests/src/FunctionalTest/SelectTest.php</file>
+            <file>tests/src/FunctionalTest/EntityMapperTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

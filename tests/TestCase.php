@@ -52,9 +52,10 @@ abstract class TestCase extends PhpUnitTestCase
 
     /**
      * @param string $type
+     * @param string $name
      * @throws RuntimeException
      */
-    public static function addInfoBlockType($type)
+    public static function addInfoBlockType($type, $name)
     {
         $exist = CIBlockType::GetByID($type)->Fetch();
         if (!$exist) {
@@ -65,10 +66,7 @@ abstract class TestCase extends PhpUnitTestCase
                 'IN_RSS' => 'N',
                 'LANG' => [
                     'ru' => [
-                        'NAME' => $type
-                    ],
-                    'en' => [
-                        'NAME' => $type
+                        'NAME' => $name
                     ]
                 ]
             ]);
