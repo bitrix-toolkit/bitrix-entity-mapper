@@ -56,6 +56,12 @@ final class EntityMapTest extends TestCase
         $this->assertEquals(Field::TYPE_STRING, $entityMap->getProperty('title')->getAnnotation()->getType());
         $this->assertEquals(false, $entityMap->getProperty('title')->getAnnotation()->isPrimaryKey());
 
+        $this->assertEquals('isShow', $entityMap->getProperty('isShow')->getCode());
+        $this->assertInstanceOf(Field::class, $entityMap->getProperty('isShow')->getAnnotation());
+        $this->assertEquals('ACTIVE', $entityMap->getProperty('isShow')->getAnnotation()->getCode());
+        $this->assertEquals(Field::TYPE_BOOLEAN, $entityMap->getProperty('isShow')->getAnnotation()->getType());
+        $this->assertEquals(false, $entityMap->getProperty('isShow')->getAnnotation()->isPrimaryKey());
+
         $this->assertEquals('author', $entityMap->getProperty('author')->getCode());
         $this->assertInstanceOf(Property::class, $entityMap->getProperty('author')->getAnnotation());
         $this->assertEquals('author', $entityMap->getProperty('author')->getAnnotation()->getCode());

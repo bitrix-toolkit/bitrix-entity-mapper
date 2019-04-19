@@ -48,6 +48,10 @@ class EntityMapper
 
         if ($exist && $exist->getId()) {
             $changedData = array_udiff_assoc($data, $exist->getData(), function ($a, $b) {
+                if ($a instanceof DateTime && $b instanceof DateTime) {
+                    return $a->getTimestamp() - $b->getTimestamp();
+                }
+
                 return $a !== $b;
             });
 
@@ -257,7 +261,7 @@ class EntityMapper
                     $value = BitrixDateTime::createFromTimestamp($value->getTimestamp());
                 } elseif ($value instanceof BitrixDateTime) {
                     // pass
-                } elseif (preg_match('/^\d+$/us', (string)$value)) {
+                } elseif (preg_match('/^-?\d+$/us', (string)$value)) {
                     $value = BitrixDateTime::createFromTimestamp($value);
                 } else {
                     $value = BitrixDateTime::createFromPhp(new DateTime($value));

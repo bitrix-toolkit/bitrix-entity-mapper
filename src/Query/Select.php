@@ -235,13 +235,16 @@ class Select
      * @param string $property
      * @param string $operator
      * @param mixed $value
-     * @return array
+     * @return array|null
      * @throws InvalidArgumentException
      */
     protected function getFilterRow($property, $operator, $value)
     {
         $propertyMap = $this->entityMap->getProperty($property);
         $propertyAnnotation = $propertyMap->getAnnotation();
+
+        $k = null;
+        $v = null;
 
         if ($propertyAnnotation instanceof Field) {
             $k = $operator . $propertyAnnotation->getCode();
@@ -262,14 +265,9 @@ class Select
             } else {
                 $v = $value !== '' && $value !== null ? $value : false;
             }
-        } else {
-            throw new InvalidArgumentException(
-                'У свойства ' . $property . ' нет аннотаций  @' . Field::class .
-                ' или @' . Property::class . '. Фильтрация по этому свойству невозможна.'
-            );
         }
 
-        return [$k => $v];
+        return $k ? [$k => $v] : null;
     }
 
     /**

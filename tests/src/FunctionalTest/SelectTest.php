@@ -35,7 +35,7 @@ final class SelectTest extends TestCase
         self::$ids = self::addElements();
     }
 
-    public static function addElements()
+    private static function addElements()
     {
         $iBlock = CIBlock::GetList(null, [
             '=TYPE' => 'entity',
@@ -70,6 +70,7 @@ final class SelectTest extends TestCase
         return [
             [
                 'NAME' => 'Остров сокровищ',
+                'ACTIVE' => 'Y',
                 'PROPERTY_VALUES' => [
                     'author' => 'Р. Л. Стивенсон',
                     'is_bestseller' => $yesPropEnum['ID'],
@@ -81,6 +82,7 @@ final class SelectTest extends TestCase
             ],
             [
                 'NAME' => 'Цвет волшебства',
+                'ACTIVE' => 'N',
                 'PROPERTY_VALUES' => [
                     'author' => 'Т. Пратчетт',
                     'is_bestseller' => false,
@@ -184,5 +186,156 @@ final class SelectTest extends TestCase
         /** @var Book[] $books */
         $books = Select::from(Book::class)->where('title', '%', 'undefined')->fetchAll();
         $this->assertCount(0, $books);
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSelectByBoolean()
+    {
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('isShow', true)->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals(true, $book->isShow);
+
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('isShow', false)->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals(false, $book->isShow);
+
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('isBestseller', true)->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals(true, $book->isBestseller);
+
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('isBestseller', false)->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals(false, $book->isBestseller);
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSortByProperty()
+    {
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('pagesNum', 'asc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev <= $book->pagesNum);
+            }
+            $prev = $book->pagesNum;
+        }
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('pagesNum', 'desc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev >= $book->pagesNum);
+            }
+            $prev = $book->pagesNum;
+        }
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSortByField()
+    {
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('id', 'asc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev <= $book->getId());
+            }
+            $prev = $book->getId();
+        }
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('id', 'desc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev >= $book->getId());
+            }
+            $prev = $book->getId();
+        }
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSortByBooleanField()
+    {
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('isShow', 'asc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev <= $book->isShow);
+            }
+            $prev = $book->isShow;
+        }
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('isShow', 'desc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev >= $book->isShow);
+            }
+            $prev = $book->isShow;
+        }
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSortByBooleanProperty()
+    {
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('isBestseller', 'asc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev <= $book->isBestseller);
+            }
+            $prev = $book->isBestseller;
+        }
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->orderBy('isBestseller', 'desc')->fetchAll();
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+
+        $prev = null;
+        foreach ($books as $book) {
+            if ($prev !== null) {
+                $this->assertTrue($prev >= $book->isBestseller);
+            }
+            $prev = $book->isBestseller;
+        }
     }
 }

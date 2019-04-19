@@ -7,6 +7,7 @@ namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
 use CDBResult;
 use CIBlock;
 use CIBlockProperty;
+use CIBlockPropertyEnum;
 use CIBlockPropertyResult;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
@@ -102,6 +103,12 @@ final class SchemaBuilderTest extends TestCase
         $this->assertEquals('N', $properties['pages_num']['PROPERTY_TYPE']);
         $this->assertEmpty($properties['pages_num']['USER_TYPE']);
         $this->assertEquals('N', $properties['pages_num']['MULTIPLE']);
+
+        $this->assertArrayHasKey('cover', $properties);
+        $this->assertEquals('Обложка', $properties['cover']['NAME']);
+        $this->assertEquals('F', $properties['cover']['PROPERTY_TYPE']);
+        $this->assertEmpty($properties['cover']['USER_TYPE']);
+        $this->assertEquals('N', $properties['cover']['MULTIPLE']);
     }
 
     /**
@@ -109,8 +116,27 @@ final class SchemaBuilderTest extends TestCase
      * @throws AnnotationException
      * @throws ReflectionException
      */
-    public function testCanRebuildSchemaCorrect()
+    public function testCanRebuildSchema()
     {
+        $infoBlock = CIBlock::GetList(null, [
+            '=TYPE' => 'entity',
+            '=CODE' => 'books',
+            'CHECK_PERMISSIONS' => 'N'
+        ])->Fetch();
+
+        $this->assertTrue(is_array($infoBlock));
+        $this->assertArrayHasKey('ID', $infoBlock);
+        $this->assertNotEmpty($infoBlock['ID']);
+
+        $isBestsellerProp = CIBlockProperty::GetList(null, [
+            'IBLOCK_ID' => $infoBlock['ID'],
+            'CODE' => 'is_bestseller'
+        ])->Fetch();
+
+        $this->assertNotEmpty($isBestsellerProp['ID']);
+        $isDeleted = CIBlockPropertyEnum::DeleteByPropertyID($isBestsellerProp['ID']);
+        $this->assertNotEmpty($isDeleted);
+
         $this->testCanBuildSchema();
         $this->testIsSchemaCorrect();
     }

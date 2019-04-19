@@ -1,4 +1,4 @@
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="Functional">
             <file>tests/src/FunctionalTest/BitrixEnvironmentTest.php</file>
@@ -6,6 +6,14 @@
             <file>tests/src/FunctionalTest/SchemaBuilderTest.php</file>
             <file>tests/src/FunctionalTest/SelectTest.php</file>
             <file>tests/src/FunctionalTest/EntityMapperTest.php</file>
+        </testsuite>
+        <testsuite name="Unit">
+            <file>tests/src/UnitTest/EntityMapperTest.php</file>
+            <file>tests/src/UnitTest/SchemaBuilderTest.php</file>
+            <file>tests/src/UnitTest/Annotation/Property/FieldTest.php</file>
+            <file>tests/src/UnitTest/Map/EntityMapTest.php</file>
+            <file>tests/src/UnitTest/Query/RawResultTest.php</file>
+            <file>tests/src/UnitTest/Query/SelectTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
