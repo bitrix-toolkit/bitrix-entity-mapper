@@ -46,7 +46,7 @@ final class EntityMapTest extends TestCase
     public function testIsEntityMapCorrect(EntityMap $entityMap)
     {
         $this->assertEquals('Entity\Book', $entityMap->getClass());
-        $this->assertEquals('entity', $entityMap->getAnnotation()->getType());
+        $this->assertEquals('test_entity', $entityMap->getAnnotation()->getType());
         $this->assertEquals('books', $entityMap->getAnnotation()->getCode());
         $this->assertEquals('Книги', $entityMap->getAnnotation()->getName());
 

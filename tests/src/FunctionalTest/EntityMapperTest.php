@@ -24,11 +24,18 @@ final class EntityMapperTest extends TestCase
     public static function setUpBeforeClass()
     {
         self::deleteInfoBlocks();
-        self::deleteInfoBlockType('entity');
+        self::deleteInfoBlockType();
         self::clearBitrixCache();
-        self::addInfoBlockType('entity', 'Библиотека');
+        self::addInfoBlockType();
         $schemaBuilder = new SchemaBuilder(EntityMap::fromClass(Book::class));
         $schemaBuilder->build();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        self::deleteInfoBlocks();
+        self::deleteInfoBlockType();
+        self::clearBitrixCache();
     }
 
     /**

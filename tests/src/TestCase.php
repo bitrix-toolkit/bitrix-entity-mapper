@@ -29,18 +29,18 @@ abstract class TestCase extends PhpUnitTestCase
 
     public static function deleteInfoBlocks()
     {
-        $rs = CIBlock::GetList(null, ['CHECK_PERMISSIONS' => 'N']);
+        $rs = CIBlock::GetList(null, ['TYPE' => 'test_entity', 'CHECK_PERMISSIONS' => 'N']);
         while ($infoBlock = $rs->Fetch()) {
             CIBlock::Delete($infoBlock['ID']);
         }
     }
 
     /**
-     * @param string $type
      * @throws RuntimeException
      */
-    public static function deleteInfoBlockType($type)
+    public static function deleteInfoBlockType()
     {
+        $type = 'test_entity';
         $exist = CIBlockType::GetByID($type)->Fetch();
         if ($exist) {
             $isDeleted = CIBlockType::Delete($type);
@@ -51,12 +51,12 @@ abstract class TestCase extends PhpUnitTestCase
     }
 
     /**
-     * @param string $type
-     * @param string $name
      * @throws RuntimeException
      */
-    public static function addInfoBlockType($type, $name)
+    public static function addInfoBlockType()
     {
+        $type = 'test_entity';
+        $name = 'Тестирование EntityMapper';
         $exist = CIBlockType::GetByID($type)->Fetch();
         if (!$exist) {
             $cIBlockType = new CIBlockType();

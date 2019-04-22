@@ -9,7 +9,8 @@ require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.
 
 CModule::IncludeModule('iblock');
 
-require __DIR__ . '/src/TestCase.php';
+require __DIR__ . '/../vendor/autoload.php';
+
 require __DIR__ . '/resources/Entity/Book.php';
 require __DIR__ . '/resources/Entity/WithoutInfoBlockAnnotation.php';
 require __DIR__ . '/resources/Entity/WithConflictPropertyAnnotations.php';

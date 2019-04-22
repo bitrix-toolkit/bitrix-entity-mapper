@@ -27,18 +27,25 @@ final class SelectTest extends TestCase
     public static function setUpBeforeClass()
     {
         self::deleteInfoBlocks();
-        self::deleteInfoBlockType('entity');
+        self::deleteInfoBlockType();
         self::clearBitrixCache();
-        self::addInfoBlockType('entity', 'Библиотека');
+        self::addInfoBlockType();
         $schemaBuilder = new SchemaBuilder(EntityMap::fromClass(Book::class));
         $schemaBuilder->build();
         self::$ids = self::addElements();
     }
 
+    public static function tearDownAfterClass()
+    {
+        self::deleteInfoBlocks();
+        self::deleteInfoBlockType();
+        self::clearBitrixCache();
+    }
+
     private static function addElements()
     {
         $iBlock = CIBlock::GetList(null, [
-            '=TYPE' => 'entity',
+            '=TYPE' => 'test_entity',
             '=CODE' => 'books',
             'CHECK_PERMISSIONS' => 'N'
         ])->Fetch();

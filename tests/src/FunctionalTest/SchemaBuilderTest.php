@@ -21,9 +21,16 @@ final class SchemaBuilderTest extends TestCase
     public static function setUpBeforeClass()
     {
         self::deleteInfoBlocks();
-        self::deleteInfoBlockType('entity');
+        self::deleteInfoBlockType();
         self::clearBitrixCache();
-        self::addInfoBlockType('entity', 'Библиотека');
+        self::addInfoBlockType();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        self::deleteInfoBlocks();
+        self::deleteInfoBlockType();
+        self::clearBitrixCache();
     }
 
     /**
@@ -43,7 +50,7 @@ final class SchemaBuilderTest extends TestCase
     public function testIsSchemaCorrect()
     {
         $infoBlock = CIBlock::GetList(null, [
-            '=TYPE' => 'entity',
+            '=TYPE' => 'test_entity',
             '=CODE' => 'books',
             'CHECK_PERMISSIONS' => 'N'
         ])->Fetch();
@@ -119,7 +126,7 @@ final class SchemaBuilderTest extends TestCase
     public function testCanRebuildSchema()
     {
         $infoBlock = CIBlock::GetList(null, [
-            '=TYPE' => 'entity',
+            '=TYPE' => 'test_entity',
             '=CODE' => 'books',
             'CHECK_PERMISSIONS' => 'N'
         ])->Fetch();

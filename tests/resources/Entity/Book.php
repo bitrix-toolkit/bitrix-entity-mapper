@@ -13,7 +13,7 @@ use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
 /**
  * Class Book
  * @package Entity
- * @InfoBlock(type="entity", code="books", name="Книги")
+ * @InfoBlock(type="test_entity", code="books", name="Книги")
  */
 class Book
 {

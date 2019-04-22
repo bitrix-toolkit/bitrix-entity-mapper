@@ -9,7 +9,7 @@ use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
 /**
  * Class WithConflictPropertyAnnotations
  * @package Entity
- * @InfoBlock(type="entity", code="conflicted", name="Конфликтные")
+ * @InfoBlock(type="test_entity", code="conflicted", name="Конфликтные")
  */
 class WithConflictPropertyAnnotations
 {
