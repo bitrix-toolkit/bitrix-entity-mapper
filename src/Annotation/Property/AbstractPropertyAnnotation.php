@@ -6,6 +6,7 @@ abstract class AbstractPropertyAnnotation implements PropertyAnnotationInterface
 {
     protected $code;
     protected $type;
+    protected $multiple;
     protected $primaryKey = false;
     protected $name;
 
@@ -23,6 +24,14 @@ abstract class AbstractPropertyAnnotation implements PropertyAnnotationInterface
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return $this->multiple;
     }
 
     /**

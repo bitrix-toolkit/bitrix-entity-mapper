@@ -22,6 +22,11 @@ interface PropertyAnnotationInterface
     public function getType();
 
     /**
+     * @return bool
+     */
+    public function isMultiple();
+
+    /**
      * @return string
      */
     public function getName();

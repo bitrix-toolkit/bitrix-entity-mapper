@@ -48,9 +48,16 @@ class EntityMapper
 
         if ($exist && $exist->getId()) {
             $changedData = array_udiff_assoc($data, $exist->getData(), function ($a, $b) {
-                if ($a instanceof DateTime && $b instanceof DateTime) {
-                    return $a->getTimestamp() - $b->getTimestamp();
-                }
+                $normalize = function ($value) {
+                    if ($value instanceof DateTime) {
+                        return $value->getTimestamp();
+                    }
+
+                    return $value;
+                };
+
+                $a = array_map($normalize, (array)$a);
+                $b = array_map($normalize, (array)$b);
 
                 return $a !== $b;
             });
@@ -233,6 +240,26 @@ class EntityMapper
         self::assert(array_key_exists($valueKey, $data), "Ключ $valueKey не найден в массиве.");
         $value = $data[$valueKey];
 
+        if ($propertyMap->getAnnotation()->isMultiple()) {
+            $value = array_map(function ($value) use ($propertyMap, $infoBlockId) {
+                return self::normalizeValueForBitrix($propertyMap, $value, $infoBlockId);
+            }, (array)$value);
+        } else {
+            $value = self::normalizeValueForBitrix($propertyMap, $value, $infoBlockId);
+        }
+
+        return [$key => $value];
+    }
+
+    /**
+     * @param PropertyMap $propertyMap
+     * @param mixed $value
+     * @param int $infoBlockId
+     * @return mixed
+     * @throws Exception
+     */
+    protected static function normalizeValueForBitrix(PropertyMap $propertyMap, $value, $infoBlockId)
+    {
         if ($propertyMap->getAnnotation()->getType() === Property::TYPE_BOOLEAN) {
             if ($value) {
                 $yesEnum = CIBlockProperty::GetPropertyEnum(
@@ -271,7 +298,7 @@ class EntityMapper
             }
         }
 
-        return [$key => $value];
+        return $value;
     }
 
     /**
@@ -284,7 +311,7 @@ class EntityMapper
         return CIBlock::GetList(null, [
             'TYPE' => $type,
             'CODE' => $code,
-            'CHECK_PERMISSIIONS' => 'N'
+            'CHECK_PERMISSIONS' => 'N'
         ])->Fetch();
     }
 

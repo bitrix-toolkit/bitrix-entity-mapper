@@ -54,6 +54,18 @@ class Book
     public $pagesNum;
 
     /**
+     * @var string[]
+     * @Property(code="tags", type="string", multiple=true, name="Теги")
+     */
+    public $tags = [];
+
+    /**
+     * @var DateTime[]
+     * @Property(code="republications_at", type="datetime", multiple=true, name="Переиздания")
+     */
+    public $republicationsAt = [];
+
+    /**
      * @var mixed
      */
     public $notMappedProperty = 'not_mapped_property';

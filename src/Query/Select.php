@@ -162,10 +162,15 @@ class Select
                     "Свойство $key не найдено в результатах CIBlockElement::GetList()."
                 );
 
-                $data[$property->getCode()] = self::normalizeValue(
-                    $elementProperties[$key]['VALUE'],
-                    $property->getAnnotation()->getType()
-                );
+                if ($property->getAnnotation()->isMultiple()) {
+                    $value = array_map(function ($value) use ($property) {
+                        return self::normalizeValue($value, $property->getAnnotation()->getType());
+                    }, (array)$elementProperties[$key]['VALUE']);
+                } else {
+                    $value = self::normalizeValue($elementProperties[$key]['VALUE'], $property->getAnnotation()->getType());
+                }
+
+                $data[$property->getCode()] = $value;
             }
 
             yield new RawResult($elementFields['ID'], $elementFields['IBLOCK_ID'], $data);

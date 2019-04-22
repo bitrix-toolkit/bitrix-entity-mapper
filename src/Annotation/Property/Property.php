@@ -33,6 +33,11 @@ final class Property extends AbstractPropertyAnnotation implements PropertyAnnot
     /**
      * @var bool
      */
+    protected $multiple;
+
+    /**
+     * @var bool
+     */
     protected $primaryKey;
 
     public function __construct(array $values)
@@ -40,6 +45,15 @@ final class Property extends AbstractPropertyAnnotation implements PropertyAnnot
         $this->code = isset($values['code']) ? $values['code'] : null;
         $this->type = isset($values['type']) ? $values['type'] : null;
         $this->name = isset($values['name']) ? $values['name'] : null;
+        $this->multiple = isset($values['multiple']) ? $values['multiple'] : null;
         $this->primaryKey = isset($values['primaryKey']) ? (bool)$values['primaryKey'] : false;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isMultiple()
+    {
+        return $this->multiple;
     }
 }

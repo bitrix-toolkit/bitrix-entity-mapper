@@ -7,7 +7,6 @@ use CIBlockProperty;
 use InvalidArgumentException;
 use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
 use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
 use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
 
 class SchemaBuilder
@@ -132,26 +131,30 @@ class SchemaBuilder
             'IBLOCK_ID' => $iBlock['ID'],
             'CODE' => $code,
             'NAME' => $name ? $name : $code,
+            'MULTIPLE' => $propertyAnnotation->isMultiple() ? 'Y' : 'N',
             'FILTRABLE' => 'Y'
         ];
 
-        if ($type === PropertyAnnotationInterface::TYPE_INTEGER || $type === PropertyAnnotationInterface::TYPE_FLOAT) {
+        if ($type === Property::TYPE_INTEGER || $type === Property::TYPE_FLOAT) {
             $fields += [
-                'PROPERTY_TYPE' => 'N'
+                'PROPERTY_TYPE' => 'N',
+                'USER_TYPE' => false
             ];
-        } elseif ($type === PropertyAnnotationInterface::TYPE_DATETIME) {
+        } elseif ($type === Property::TYPE_DATETIME) {
             $fields += [
                 'PROPERTY_TYPE' => 'S',
                 'USER_TYPE' => 'DateTime'
             ];
-        } elseif ($type === PropertyAnnotationInterface::TYPE_FILE) {
+        } elseif ($type === Property::TYPE_FILE) {
             $fields += [
-                'PROPERTY_TYPE' => 'F'
+                'PROPERTY_TYPE' => 'F',
+                'USER_TYPE' => false
             ];
-        } elseif ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+        } elseif ($type === Property::TYPE_BOOLEAN) {
             $fields += [
                 'PROPERTY_TYPE' => 'L',
-                'LIST_TYPE' => 'C'
+                'LIST_TYPE' => 'C',
+                'USER_TYPE' => false
             ];
         } else {
             $fields += [
@@ -168,7 +171,7 @@ class SchemaBuilder
 
         if (!empty($exist['ID'])) {
             $propId = $exist['ID'];
-            if ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+            if ($type === Property::TYPE_BOOLEAN) {
                 $existEnum = CIBlockProperty::GetPropertyEnum($propId, null, ['XML_ID' => 'Y', 'VALUE' => 'Y'])->Fetch();
                 if (!$existEnum) {
                     $fields += ['VALUES' => [['XML_ID' => 'Y', 'VALUE' => 'Y', 'DEF' => 'N']]];
@@ -179,7 +182,7 @@ class SchemaBuilder
             $isUpdated = $cIBlockProperty->Update($propId, $fields);
             self::assert($isUpdated, strip_tags($cIBlockProperty->LAST_ERROR));
         } else {
-            if ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+            if ($type === Property::TYPE_BOOLEAN) {
                 $fields += ['VALUES' => [['XML_ID' => 'Y', 'VALUE' => 'Y', 'DEF' => 'N']]];
             }
             $cIBlockProperty = new CIBlockProperty();

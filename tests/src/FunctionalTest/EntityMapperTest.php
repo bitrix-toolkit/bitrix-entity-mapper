@@ -51,7 +51,12 @@ final class EntityMapperTest extends TestCase
         $book->author = 'Р. Л. Стивенсон';
         $book->isBestseller = true;
         $book->pagesNum = 350;
+        $book->tags = ['приключения', 'пираты'];
         $book->publishedAt = DateTime::createFromFormat('d.m.Y H:i:s', '14.06.1883 00:00:00');
+        $book->republicationsAt = [
+            DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1901 00:00:00'),
+            DateTime::createFromFormat('d.m.Y H:i:s', '07.05.2001 00:00:00')
+        ];
 
         $book->setCover(__DIR__ . '/../../resources/cover.jpg');
         $bookRef = new ReflectionObject($book);
@@ -93,10 +98,22 @@ final class EntityMapperTest extends TestCase
         $this->assertEquals('Р. Л. Стивенсон', $properties['author']['VALUE']);
         $this->assertEquals('Y', $properties['is_bestseller']['VALUE']);
         $this->assertEquals(350, $properties['pages_num']['VALUE']);
+        $this->assertEquals(['приключения', 'пираты'], $properties['tags']['VALUE']);
         $this->assertEquals($coverFileId, $properties['cover']['VALUE']);
+
         $this->assertEquals(
             DateTime::createFromFormat('d.m.Y H:i:s', '14.06.1883 00:00:00')->getTimestamp(),
             (new DateTime($properties['published_at']['VALUE']))->getTimestamp()
+        );
+
+        $this->assertEquals(
+            [
+                DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1901 00:00:00')->getTimestamp(),
+                DateTime::createFromFormat('d.m.Y H:i:s', '07.05.2001 00:00:00')->getTimestamp()
+            ],
+            array_map(function ($strDate) {
+                return (new DateTime($strDate))->getTimestamp();
+            }, $properties['republications_at']['VALUE'])
         );
 
         return $stack;
@@ -122,7 +139,12 @@ final class EntityMapperTest extends TestCase
         $book->author = 'Т. Пратчетт';
         $book->isBestseller = false;
         $book->pagesNum = 300;
+        $book->tags = ['приключения', 'фентези'];
         $book->publishedAt = DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1983 00:00:00');
+        $book->republicationsAt = [
+            DateTime::createFromFormat('d.m.Y H:i:s', '12.06.1991 00:00:00'),
+            DateTime::createFromFormat('d.m.Y H:i:s', '31.12.2007 00:00:00')
+        ];
 
         $updatedId = EntityMapper::save($book);
         $this->assertNotEmpty($updatedId);
@@ -154,10 +176,22 @@ final class EntityMapperTest extends TestCase
         $this->assertEquals('Т. Пратчетт', $properties['author']['VALUE']);
         $this->assertEquals(false, $properties['is_bestseller']['VALUE']);
         $this->assertEquals(300, $properties['pages_num']['VALUE']);
+        $this->assertEquals(['приключения', 'фентези'], $properties['tags']['VALUE']);
         $this->assertEquals($coverFileId, $properties['cover']['VALUE']);
+
         $this->assertEquals(
             DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1983 00:00:00')->getTimestamp(),
             (new DateTime($properties['published_at']['VALUE']))->getTimestamp()
+        );
+
+        $this->assertEquals(
+            [
+                DateTime::createFromFormat('d.m.Y H:i:s', '12.06.1991 00:00:00')->getTimestamp(),
+                DateTime::createFromFormat('d.m.Y H:i:s', '31.12.2007 00:00:00')->getTimestamp()
+            ],
+            array_map(function ($strDate) {
+                return (new DateTime($strDate))->getTimestamp();
+            }, $properties['republications_at']['VALUE'])
         );
 
         return $stack;

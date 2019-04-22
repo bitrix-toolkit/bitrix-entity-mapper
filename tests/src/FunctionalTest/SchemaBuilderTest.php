@@ -111,6 +111,18 @@ final class SchemaBuilderTest extends TestCase
         $this->assertEmpty($properties['pages_num']['USER_TYPE']);
         $this->assertEquals('N', $properties['pages_num']['MULTIPLE']);
 
+        $this->assertArrayHasKey('tags', $properties);
+        $this->assertEquals('Теги', $properties['tags']['NAME']);
+        $this->assertEquals('S', $properties['tags']['PROPERTY_TYPE']);
+        $this->assertEmpty($properties['tags']['USER_TYPE']);
+        $this->assertEquals('Y', $properties['tags']['MULTIPLE']);
+
+        $this->assertArrayHasKey('republications_at', $properties);
+        $this->assertEquals('Переиздания', $properties['republications_at']['NAME']);
+        $this->assertEquals('S', $properties['republications_at']['PROPERTY_TYPE']);
+        $this->assertEquals('DateTime', $properties['republications_at']['USER_TYPE']);
+        $this->assertEquals('Y', $properties['republications_at']['MULTIPLE']);
+
         $this->assertArrayHasKey('cover', $properties);
         $this->assertEquals('Обложка', $properties['cover']['NAME']);
         $this->assertEquals('F', $properties['cover']['PROPERTY_TYPE']);
