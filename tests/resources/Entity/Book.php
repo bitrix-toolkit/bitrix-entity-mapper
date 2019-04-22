@@ -105,9 +105,15 @@ class Book
         }
 
         $content = file_get_contents($imgPath);
+        $imgInfo = getimagesizefromstring($content);
+
+        if (empty($imgInfo['mime']) || !preg_match('/^image\//ui', $imgInfo['mime'])) {
+            throw new InvalidArgumentException("Файл $imgPath не является файлом изображения.");
+        }
 
         $arFile = [
             'name' => pathinfo($imgPath, PATHINFO_BASENAME),
+            'type' => $imgInfo['mime'],
             'content' => $content
         ];
 
