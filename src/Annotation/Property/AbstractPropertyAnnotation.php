@@ -8,6 +8,7 @@ abstract class AbstractPropertyAnnotation implements PropertyAnnotationInterface
     protected $type;
     protected $multiple;
     protected $primaryKey = false;
+    protected $entity;
     protected $name;
 
     /**
@@ -48,5 +49,13 @@ abstract class AbstractPropertyAnnotation implements PropertyAnnotationInterface
     public function isPrimaryKey()
     {
         return $this->primaryKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntity()
+    {
+        return $this->entity;
     }
 }

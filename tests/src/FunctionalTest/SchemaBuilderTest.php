@@ -40,8 +40,7 @@ final class SchemaBuilderTest extends TestCase
     public function testCanBuildSchema()
     {
         $entityMap = EntityMap::fromClass(Book::class);
-        $schemaBuilder = new SchemaBuilder($entityMap);
-        $this->assertTrue($schemaBuilder->build());
+        $this->assertTrue(SchemaBuilder::build($entityMap));
     }
 
     /**
@@ -70,11 +69,11 @@ final class SchemaBuilderTest extends TestCase
             $properties[$prop['CODE']] = $prop;
         }
 
-        $this->assertArrayHasKey('author', $properties);
-        $this->assertEquals('Автор', $properties['author']['NAME']);
-        $this->assertEquals('S', $properties['author']['PROPERTY_TYPE']);
-        $this->assertEmpty($properties['author']['USER_TYPE']);
-        $this->assertEquals('N', $properties['author']['MULTIPLE']);
+        $this->assertArrayHasKey('co_authors', $properties);
+        $this->assertEquals('Соавторы', $properties['co_authors']['NAME']);
+        $this->assertEquals('E', $properties['co_authors']['PROPERTY_TYPE']);
+        $this->assertEmpty($properties['co_authors']['USER_TYPE']);
+        $this->assertEquals('Y', $properties['co_authors']['MULTIPLE']);
 
         $this->assertArrayHasKey('published_at', $properties);
         $this->assertEquals('Опубликована', $properties['published_at']['NAME']);

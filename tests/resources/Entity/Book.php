@@ -30,10 +30,16 @@ class Book
     public $title;
 
     /**
-     * @var string
-     * @Property(code="author", type="string", name="Автор")
+     * @var Author
+     * @Property(code="author", type="entity", entity="Entity\Author", name="Автор")
      */
     public $author;
+
+    /**
+     * @var Author[]
+     * @Property(code="co_authors", type="entity", entity="\Entity\Author", multiple=true, name="Соавторы")
+     */
+    public $coAuthors = [];
 
     /**
      * @var DateTime

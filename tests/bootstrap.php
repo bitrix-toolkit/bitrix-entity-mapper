@@ -12,5 +12,6 @@ CModule::IncludeModule('iblock');
 require __DIR__ . '/../vendor/autoload.php';
 
 require __DIR__ . '/resources/Entity/Book.php';
+require __DIR__ . '/resources/Entity/Author.php';
 require __DIR__ . '/resources/Entity/WithoutInfoBlockAnnotation.php';
 require __DIR__ . '/resources/Entity/WithConflictPropertyAnnotations.php';

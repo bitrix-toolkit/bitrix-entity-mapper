@@ -21,6 +21,7 @@ use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
 class Select
 {
     protected $entityMap;
+    protected $whereRaw = [];
     protected $where = [];
     protected $orderBy = [];
 
@@ -83,6 +84,28 @@ class Select
     }
 
     /**
+     * @param string $f
+     * @param mixed $_
+     * @param mixed
+     * @return $this
+     */
+    public function whereRaw($f, $_)
+    {
+        if (func_num_args() > 2) {
+            $field = $f;
+            $operator = $_;
+            $value = func_get_arg(2);
+        } else {
+            $field = $f;
+            $operator = '=';
+            $value = $_;
+        }
+
+        $this->whereRaw[$operator . $field] = $value;
+        return $this;
+    }
+
+    /**
      * @param string $p
      * @param string $d
      * @return $this
@@ -115,6 +138,8 @@ class Select
             list($property, $operator, $value) = $entry;
             $filter += $this->getFilterRow($property, $operator, $value);
         }
+
+        $filter = array_merge($filter, $this->whereRaw);
 
         $order = [];
         foreach ($this->orderBy as $property => $direction) {
@@ -163,11 +188,23 @@ class Select
                 );
 
                 if ($property->getAnnotation()->isMultiple()) {
-                    $value = array_map(function ($value) use ($property) {
-                        return self::normalizeValue($value, $property->getAnnotation()->getType());
-                    }, (array)$elementProperties[$key]['VALUE']);
+                    if (is_array($elementProperties[$key]['VALUE'])) {
+                        $value = array_map(function ($value) use ($property) {
+                            return self::normalizeValue(
+                                $value,
+                                $property->getAnnotation()->getType(),
+                                $property->getAnnotation()->getEntity()
+                            );
+                        }, $elementProperties[$key]['VALUE']);
+                    } else {
+                        $value = [];
+                    }
                 } else {
-                    $value = self::normalizeValue($elementProperties[$key]['VALUE'], $property->getAnnotation()->getType());
+                    $value = self::normalizeValue(
+                        $elementProperties[$key]['VALUE'],
+                        $property->getAnnotation()->getType(),
+                        $property->getAnnotation()->getEntity()
+                    );
                 }
 
                 $data[$property->getCode()] = $value;
@@ -278,13 +315,16 @@ class Select
     /**
      * @param mixed $value
      * @param string $type
+     * @param string|null $entity
      * @return mixed
      * @throws Exception
      */
-    protected static function normalizeValue($value, $type)
+    protected static function normalizeValue($value, $type, $entity = null)
     {
         if ($value === null) {
             return null;
+        } elseif ($type === PropertyAnnotationInterface::TYPE_ENTITY) {
+            return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
         } elseif ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
             return $value && $value !== 'N' ? true : false;
         } elseif (in_array($type, [PropertyAnnotationInterface::TYPE_INTEGER, PropertyAnnotationInterface::TYPE_FLOAT])) {

@@ -21,7 +21,7 @@ final class Property extends AbstractPropertyAnnotation implements PropertyAnnot
     /**
      * @var string
      * @Required
-     * @Enum({"string", "boolean", "integer", "float", "datetime", "file"})
+     * @Enum({"string", "boolean", "integer", "float", "datetime", "file", "entity"})
      */
     protected $type;
 
@@ -40,6 +40,11 @@ final class Property extends AbstractPropertyAnnotation implements PropertyAnnot
      */
     protected $primaryKey;
 
+    /**
+     * @var string
+     */
+    protected $entity;
+
     public function __construct(array $values)
     {
         $this->code = isset($values['code']) ? $values['code'] : null;
@@ -47,6 +52,7 @@ final class Property extends AbstractPropertyAnnotation implements PropertyAnnot
         $this->name = isset($values['name']) ? $values['name'] : null;
         $this->multiple = isset($values['multiple']) ? $values['multiple'] : null;
         $this->primaryKey = isset($values['primaryKey']) ? (bool)$values['primaryKey'] : false;
+        $this->entity = isset($values['entity']) ? $values['entity'] : null;
     }
 
     /**

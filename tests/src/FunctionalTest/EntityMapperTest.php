@@ -6,6 +6,7 @@ use _CIBElement;
 use CIBlockElement;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationException;
+use Entity\Author;
 use Entity\Book;
 use Exception;
 use ReflectionException;
@@ -27,8 +28,8 @@ final class EntityMapperTest extends TestCase
         self::deleteInfoBlockType();
         self::clearBitrixCache();
         self::addInfoBlockType();
-        $schemaBuilder = new SchemaBuilder(EntityMap::fromClass(Book::class));
-        $schemaBuilder->build();
+        SchemaBuilder::build(EntityMap::fromClass(Book::class));
+        SchemaBuilder::build(EntityMap::fromClass(Author::class));
     }
 
     public static function tearDownAfterClass()
@@ -48,7 +49,9 @@ final class EntityMapperTest extends TestCase
         $book = new Book();
         $book->title = 'Остров сокровищ';
         $book->isShow = true;
-        $book->author = 'Р. Л. Стивенсон';
+        $book->author = new Author('Р. Л. Стивенсон');
+        $book->coAuthors[] = new Author('Неизвестный автор');
+        $book->coAuthors[] = new Author('Неизвестный автор 2');
         $book->isBestseller = true;
         $book->pagesNum = 350;
         $book->tags = ['приключения', 'пираты'];
@@ -95,11 +98,27 @@ final class EntityMapperTest extends TestCase
         $this->assertEquals('Y', $fields['ACTIVE']);
 
         $properties = $element->GetProperties();
-        $this->assertEquals('Р. Л. Стивенсон', $properties['author']['VALUE']);
         $this->assertEquals('Y', $properties['is_bestseller']['VALUE']);
         $this->assertEquals(350, $properties['pages_num']['VALUE']);
         $this->assertEquals(['приключения', 'пираты'], $properties['tags']['VALUE']);
         $this->assertEquals($coverFileId, $properties['cover']['VALUE']);
+
+        $this->assertNotEmpty($properties['author']['VALUE']);
+        $bitrixAuthor = CIBlockElement::GetList(null, ['ID' => $properties['author']['VALUE']])->Fetch();
+        $this->assertNotEmpty($bitrixAuthor['NAME']);
+        $this->assertEquals('Р. Л. Стивенсон', $bitrixAuthor['NAME']);
+
+        $this->assertNotEmpty($properties['co_authors']['VALUE']);
+        $this->assertTrue(is_array($properties['co_authors']['VALUE']));
+
+        $coAuthorNames = [];
+        $childElementRs = CIBlockElement::GetList(null, ['ID' => $properties['co_authors']['VALUE']]);
+        while ($childElement = $childElementRs->Fetch()) {
+            $coAuthorNames[] = $childElement['NAME'];
+        }
+
+        $this->assertEmpty(array_diff(['Неизвестный автор', 'Неизвестный автор 2'], $coAuthorNames));
+        $this->assertEmpty(array_diff($coAuthorNames, ['Неизвестный автор', 'Неизвестный автор 2']));
 
         $this->assertEquals(
             DateTime::createFromFormat('d.m.Y H:i:s', '14.06.1883 00:00:00')->getTimestamp(),
@@ -134,9 +153,16 @@ final class EntityMapperTest extends TestCase
         $book = EntityMapper::select(Book::class)->where('id', $id)->fetch();
         $this->assertInstanceOf(Book::class, $book);
 
+        /** @var Author $author */
+        $author = EntityMapper::select(Author::class)->where('name', 'Р. Л. Стивенсон')->fetch();
+        $this->assertInstanceOf(Author::class, $author);
+        $this->assertEquals('Р. Л. Стивенсон', $author->getName());
+        $author->setName('Т. Пратчетт');
+
         $book->title = 'Цвет волшебства';
         $book->isShow = false;
-        $book->author = 'Т. Пратчетт';
+        $book->author = $author;
+        $book->coAuthors = [];
         $book->isBestseller = false;
         $book->pagesNum = 300;
         $book->tags = ['приключения', 'фентези'];
@@ -173,11 +199,17 @@ final class EntityMapperTest extends TestCase
         $this->assertEquals('N', $fields['ACTIVE']);
 
         $properties = $element->GetProperties();
-        $this->assertEquals('Т. Пратчетт', $properties['author']['VALUE']);
         $this->assertEquals(false, $properties['is_bestseller']['VALUE']);
         $this->assertEquals(300, $properties['pages_num']['VALUE']);
         $this->assertEquals(['приключения', 'фентези'], $properties['tags']['VALUE']);
         $this->assertEquals($coverFileId, $properties['cover']['VALUE']);
+
+        $this->assertNotEmpty($properties['author']['VALUE']);
+        $bitrixAuthor = CIBlockElement::GetList(null, ['ID' => $properties['author']['VALUE']])->Fetch();
+        $this->assertNotEmpty($bitrixAuthor['NAME']);
+        $this->assertEquals('Т. Пратчетт', $bitrixAuthor['NAME']);
+
+        $this->assertEmpty($properties['co_authors']['VALUE']);
 
         $this->assertEquals(
             DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1983 00:00:00')->getTimestamp(),
@@ -193,6 +225,41 @@ final class EntityMapperTest extends TestCase
                 return (new DateTime($strDate))->getTimestamp();
             }, $properties['republications_at']['VALUE'])
         );
+
+        return $stack;
+    }
+
+    /**
+     * @depends testIsUpdatedCorrect
+     * @param array $stack
+     * @return array
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSaveEmptyChildEntities(array $stack)
+    {
+        $id = $stack['id'];
+
+        /** @var Book $book */
+        $book = EntityMapper::select(Book::class)->where('id', $id)->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+
+        $book->author = null;
+        $book->coAuthors = null;
+
+        $updatedId = EntityMapper::save($book);
+        $this->assertNotEmpty($updatedId);
+        $this->assertEquals($id, $updatedId);
+
+        $element = CIBlockElement::GetList(null, ['ID' => $id])->GetNextElement();
+        $this->assertInstanceOf(_CIBElement::class, $element);
+
+        $fields = $element->GetFields();
+        $this->assertEquals($id, $fields['ID']);
+
+        $properties = $element->GetProperties();
+        $this->assertEmpty($properties['author']['VALUE']);
+        $this->assertEmpty($properties['co_authors']['VALUE']);
 
         return $stack;
     }

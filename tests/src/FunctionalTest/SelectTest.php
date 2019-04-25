@@ -8,6 +8,7 @@ use CIBlockElement;
 use CIBlockProperty;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationException;
+use Entity\Author;
 use Entity\Book;
 use Generator;
 use ReflectionException;
@@ -18,7 +19,8 @@ use Sheerockoff\BitrixEntityMapper\Test\TestCase;
 
 final class SelectTest extends TestCase
 {
-    private static $ids = [];
+    private static $authorIds = [];
+    private static $bookIds = [];
 
     /**
      * @throws AnnotationException
@@ -30,9 +32,10 @@ final class SelectTest extends TestCase
         self::deleteInfoBlockType();
         self::clearBitrixCache();
         self::addInfoBlockType();
-        $schemaBuilder = new SchemaBuilder(EntityMap::fromClass(Book::class));
-        $schemaBuilder->build();
-        self::$ids = self::addElements();
+        SchemaBuilder::build(EntityMap::fromClass(Author::class));
+        SchemaBuilder::build(EntityMap::fromClass(Book::class));
+        self::$authorIds = self::addAuthors();
+        self::$bookIds = self::addBooks();
     }
 
     public static function tearDownAfterClass()
@@ -42,7 +45,36 @@ final class SelectTest extends TestCase
         self::clearBitrixCache();
     }
 
-    private static function addElements()
+    private static function addAuthors()
+    {
+        $iBlock = CIBlock::GetList(null, [
+            '=TYPE' => 'test_entity',
+            '=CODE' => 'authors',
+            'CHECK_PERMISSIONS' => 'N'
+        ])->Fetch();
+
+        self::assertNotEmpty($iBlock['ID']);
+
+        $coAuthors = [
+            ['NAME' => 'Р. Л. Стивенсон'],
+            ['NAME' => 'Т. Пратчетт'],
+            ['NAME' => 'Неизвестный автор'],
+            ['NAME' => 'Неизвестный автор 2']
+        ];
+
+        $ids = [];
+        foreach ($coAuthors as $fields) {
+            $fields['IBLOCK_ID'] = $iBlock['ID'];
+            $cIBlockElement = new CIBlockElement();
+            $id = $cIBlockElement->Add($fields);
+            self::assertNotEmpty($id, strip_tags($cIBlockElement->LAST_ERROR));
+            $ids[$fields['NAME']] = $id;
+        }
+
+        return $ids;
+    }
+
+    private static function addBooks()
     {
         $iBlock = CIBlock::GetList(null, [
             '=TYPE' => 'test_entity',
@@ -53,7 +85,7 @@ final class SelectTest extends TestCase
         self::assertNotEmpty($iBlock['ID']);
 
         $ids = [];
-        foreach (self::getElementsFields() as $fields) {
+        foreach (self::getBookFields() as $fields) {
             $fields['IBLOCK_ID'] = $iBlock['ID'];
             $cIBlockElement = new CIBlockElement();
             $id = $cIBlockElement->Add($fields);
@@ -64,7 +96,7 @@ final class SelectTest extends TestCase
         return $ids;
     }
 
-    private static function getElementsFields()
+    private static function getBookFields()
     {
         $yesPropEnum = CIBlockProperty::GetPropertyEnum(
             'is_bestseller',
@@ -79,9 +111,11 @@ final class SelectTest extends TestCase
                 'NAME' => 'Остров сокровищ',
                 'ACTIVE' => 'Y',
                 'PROPERTY_VALUES' => [
-                    'author' => 'Р. Л. Стивенсон',
+                    'author' => self::$authorIds['Р. Л. Стивенсон'],
+                    'co_authors' => [self::$authorIds['Неизвестный автор'], self::$authorIds['Неизвестный автор 2']],
                     'is_bestseller' => $yesPropEnum['ID'],
                     'pages_num' => 350,
+                    'tags' => ['приключения', 'пираты'],
                     'published_at' => BitrixDateTime::createFromPhp(
                         DateTime::createFromFormat('d.m.Y H:i:s', '14.06.1883 00:00:00')
                     )
@@ -91,9 +125,11 @@ final class SelectTest extends TestCase
                 'NAME' => 'Цвет волшебства',
                 'ACTIVE' => 'N',
                 'PROPERTY_VALUES' => [
-                    'author' => 'Т. Пратчетт',
+                    'author' => self::$authorIds['Т. Пратчетт'],
+                    'co_authors' => false,
                     'is_bestseller' => false,
                     'pages_num' => 300,
+                    'tags' => ['приключения', 'фентези'],
                     'published_at' => BitrixDateTime::createFromPhp(
                         DateTime::createFromFormat('d.m.Y H:i:s', '01.09.1983 00:00:00')
                     )
@@ -159,7 +195,7 @@ final class SelectTest extends TestCase
      */
     public function testCanSelectByPrimaryKey()
     {
-        foreach (self::$ids as $id) {
+        foreach (self::$bookIds as $id) {
             $select = Select::from(Book::class)->where('id', $id);
             $this->assertInstanceOf(Select::class, $select);
             /** @var Book $book */
@@ -180,11 +216,6 @@ final class SelectTest extends TestCase
         $this->assertInstanceOf(Book::class, $book);
         $this->assertEquals('Остров сокровищ', $book->title);
 
-        /** @var Book $book */
-        $book = Select::from(Book::class)->where('author', '%', 'пратчет')->fetch();
-        $this->assertInstanceOf(Book::class, $book);
-        $this->assertEquals('Т. Пратчетт', $book->author);
-
         /** @var Book[] $books */
         $books = Select::from(Book::class)->where('title', '%', 'ст')->fetchAll();
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
@@ -193,6 +224,10 @@ final class SelectTest extends TestCase
         /** @var Book[] $books */
         $books = Select::from(Book::class)->where('title', '%', 'undefined')->fetchAll();
         $this->assertCount(0, $books);
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('tags', 'фентези')->fetchAll();
+        $this->assertCount(1, $books);
     }
 
     /**
@@ -220,6 +255,23 @@ final class SelectTest extends TestCase
         $book = Select::from(Book::class)->where('isBestseller', false)->fetch();
         $this->assertInstanceOf(Book::class, $book);
         $this->assertEquals(false, $book->isBestseller);
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanSelectByRawFilter()
+    {
+        /** @var Book $book */
+        $book = Select::from(Book::class)->whereRaw('NAME', 'Остров сокровищ')->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('Остров сокровищ', $book->title);
+
+        /** @var Book $book */
+        $book = Select::from(Book::class)->whereRaw('NAME', '%', 'сокровищ')->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('Остров сокровищ', $book->title);
     }
 
     /**
@@ -344,5 +396,40 @@ final class SelectTest extends TestCase
             }
             $prev = $book->isBestseller;
         }
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testCanReturnChildEntities()
+    {
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('title', 'Остров сокровищ')->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertEquals('Р. Л. Стивенсон', $book->author->getName());
+        $this->assertContainsOnlyInstancesOf(Author::class, $book->coAuthors);
+
+        $coAuthorNames = array_map(function (Author $author) {
+            return $author->getName();
+        }, $book->coAuthors);
+
+        $this->assertEmpty(array_diff($coAuthorNames, ['Неизвестный автор', 'Неизвестный автор 2']));
+        $this->assertEmpty(array_diff(['Неизвестный автор', 'Неизвестный автор 2'], $coAuthorNames));
+
+        /** @var Book $book */
+        $book = Select::from(Book::class)->where('title', 'Цвет волшебства')->fetch();
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertEquals('Т. Пратчетт', $book->author->getName());
+        $this->assertContainsOnlyInstancesOf(Author::class, $book->coAuthors);
+
+        $coAuthorNames = array_map(function (Author $author) {
+            return $author->getName();
+        }, $book->coAuthors);
+
+        $this->assertEmpty(array_diff($coAuthorNames, []));
+        $this->assertEmpty(array_diff([], $coAuthorNames));
     }
 }

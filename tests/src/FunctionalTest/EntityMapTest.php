@@ -64,13 +64,13 @@ final class EntityMapTest extends TestCase
         $this->assertEquals(false, $entityMap->getProperty('isShow')->getAnnotation()->isPrimaryKey());
         $this->assertEmpty($entityMap->getProperty('isShow')->getAnnotation()->isMultiple());
 
-        $this->assertEquals('author', $entityMap->getProperty('author')->getCode());
-        $this->assertInstanceOf(Property::class, $entityMap->getProperty('author')->getAnnotation());
-        $this->assertEquals('author', $entityMap->getProperty('author')->getAnnotation()->getCode());
-        $this->assertEquals(Property::TYPE_STRING, $entityMap->getProperty('author')->getAnnotation()->getType());
-        $this->assertEquals(false, $entityMap->getProperty('author')->getAnnotation()->isPrimaryKey());
-        $this->assertEquals('Автор', $entityMap->getProperty('author')->getAnnotation()->getName());
-        $this->assertEmpty($entityMap->getProperty('author')->getAnnotation()->isMultiple());
+        $this->assertEquals('coAuthors', $entityMap->getProperty('coAuthors')->getCode());
+        $this->assertInstanceOf(Property::class, $entityMap->getProperty('coAuthors')->getAnnotation());
+        $this->assertEquals('co_authors', $entityMap->getProperty('coAuthors')->getAnnotation()->getCode());
+        $this->assertEquals(Property::TYPE_ENTITY, $entityMap->getProperty('coAuthors')->getAnnotation()->getType());
+        $this->assertEquals(false, $entityMap->getProperty('coAuthors')->getAnnotation()->isPrimaryKey());
+        $this->assertEquals('Соавторы', $entityMap->getProperty('coAuthors')->getAnnotation()->getName());
+        $this->assertTrue($entityMap->getProperty('coAuthors')->getAnnotation()->isMultiple());
 
         $this->assertEquals('publishedAt', $entityMap->getProperty('publishedAt')->getCode());
         $this->assertInstanceOf(Property::class, $entityMap->getProperty('publishedAt')->getAnnotation());

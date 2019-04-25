@@ -44,10 +44,15 @@ class EntityMapper
         });
 
         $data = self::entityToArray($entityMap, $object);
+
+        // Сохраняем вложенные сущности
+        $entityData = self::saveChildEntities($entityMap, $data);
+        $data = array_replace($data, $entityData);
+
         $exist = self::getExistObjectRawResult($entityMap, $object);
 
         if ($exist && $exist->getId()) {
-            $changedData = array_udiff_assoc($data, $exist->getData(), function ($a, $b) {
+            $changedData = array_udiff_assoc($data, $exist->getData(), function ($new, $old) {
                 $normalize = function ($value) {
                     if ($value instanceof DateTime) {
                         return $value->getTimestamp();
@@ -56,10 +61,10 @@ class EntityMapper
                     return $value;
                 };
 
-                $a = array_map($normalize, (array)$a);
-                $b = array_map($normalize, (array)$b);
+                $new = $new === null || $new === false || $new === [] ? false : array_map($normalize, (array)$new);
+                $old = $old === null || $old === false || $old === [] ? false : array_map($normalize, (array)$old);
 
-                return $a !== $b;
+                return $new !== $old;
             });
 
             if (!$changedData) {
@@ -122,6 +127,71 @@ class EntityMapper
 
             return $elementId;
         }
+    }
+
+    /**
+     * @param EntityMap $entityMap
+     * @param array $data
+     * @return array
+     * @throws AnnotationException
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     */
+    protected static function saveChildEntities(EntityMap $entityMap, array $data)
+    {
+        /** @var PropertyMap[] $entityProperties */
+        $entityProperties = array_filter($entityMap->getProperties(), function (PropertyMap $propertyMap) {
+            return $propertyMap->getAnnotation()->getType() === Property::TYPE_ENTITY;
+        });
+
+        foreach ($entityProperties as $entityProperty) {
+            $key = $entityProperty->getCode();
+            self::assert(array_key_exists($key, $data), "Ключ $key не найден в массиве данных полученных из объекта.");
+            $value = $data[$key];
+
+            $needClass = $entityProperty->getAnnotation()->getEntity();
+            if ($entityProperty->getAnnotation()->isMultiple()) {
+                $objects = !empty($value) ? $value : [];
+                self::assert(is_array($objects), 'Множественное значение должно быть массивом.');
+                foreach ($objects as $object) {
+                    self::assert(is_object($object), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
+                    self::assert($object instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
+                }
+            } else {
+                if (!empty($value)) {
+                    self::assert(is_object($value), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
+                    self::assert($value instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
+                }
+            }
+        }
+
+        $entityData = [];
+        foreach ($entityProperties as $entityProperty) {
+            $key = $entityProperty->getCode();
+            if ($entityProperty->getAnnotation()->isMultiple()) {
+                $objects = $data[$key];
+                if (empty($objects)) {
+                    $entityData[$key] = false;
+                    continue;
+                }
+
+                foreach ($objects as $object) {
+                    $objectId = self::save($object);
+                    $entityData[$key][] = $objectId;
+                }
+            } else {
+                $object = $data[$key];
+                if (empty($object)) {
+                    $entityData[$key] = false;
+                    continue;
+                }
+
+                $objectId = self::save($object);
+                $entityData[$key] = $objectId;
+            }
+        }
+
+        return $entityData;
     }
 
     /**

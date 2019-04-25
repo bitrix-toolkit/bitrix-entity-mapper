@@ -12,30 +12,17 @@ use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
 class SchemaBuilder
 {
     /**
-     * @var EntityMap
-     */
-    protected $entityMap;
-
-    /**
-     * SchemaBuilder constructor.
      * @param EntityMap $entityMap
-     */
-    public function __construct(EntityMap $entityMap)
-    {
-        $this->entityMap = $entityMap;
-    }
-
-    /**
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function build()
+    public static function build(EntityMap $entityMap)
     {
-        self::buildInfoBlock($this->entityMap->getAnnotation());
-        foreach ($this->entityMap->getProperties() as $propertyMap) {
+        self::buildInfoBlock($entityMap->getAnnotation());
+        foreach ($entityMap->getProperties() as $propertyMap) {
             $propAnnotation = $propertyMap->getAnnotation();
             if ($propAnnotation instanceof Property) {
-                self::buildProperty($this->entityMap->getAnnotation(), $propAnnotation);
+                self::buildProperty($entityMap->getAnnotation(), $propAnnotation);
             }
         }
 
@@ -154,6 +141,11 @@ class SchemaBuilder
             $fields += [
                 'PROPERTY_TYPE' => 'L',
                 'LIST_TYPE' => 'C',
+                'USER_TYPE' => false
+            ];
+        } elseif ($type === Property::TYPE_ENTITY) {
+            $fields += [
+                'PROPERTY_TYPE' => 'E',
                 'USER_TYPE' => false
             ];
         } else {

@@ -26,9 +26,8 @@ final class SchemaBuilderTest extends TestCase
         $annotationTypePropReflection->setAccessible(true);
         $annotationTypePropReflection->setValue($entityMap->getAnnotation(), '');
         $annotationTypePropReflection->setAccessible(false);
-        $schemaBuilder = new SchemaBuilder($entityMap);
 
         $this->expectException(InvalidArgumentException::class);
-        $schemaBuilder->build();
+        SchemaBuilder::build($entityMap);
     }
 }
