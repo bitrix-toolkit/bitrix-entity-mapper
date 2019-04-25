@@ -10,7 +10,7 @@
 ## Установка
 
 ```
-composer require sheerockoff/bitrix-entity-mapper
+composer require sheerockoff/bitrix-entity-mapper:dev-master
 ```
 
 ## Быстрый старт
@@ -55,6 +55,21 @@ class Book
      */
     public $publishedAt;
 }
+```
+
+Применяем автоматические миграции:
+
+```php
+<?php
+
+use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
+use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
+use Entity\Book;
+
+require 'vendor/autoload.php';
+
+$entityMap = EntityMap::fromClass(Book::class);
+SchemaBuilder::build($entityMap);
 ```
 
 Сохраняем новый объект:
@@ -125,7 +140,7 @@ if (!$book) {
 }
 ```
 
-Сортируем выборку и обновляем объект:
+Сортируем выборку:
 
 ```php
 <?php
@@ -141,10 +156,27 @@ $book = EntityMapper::select(Book::class)->orderBy('publishedAt', 'desc')->fetch
 if (!$book) {
     throw new InvalidArgumentException('Последняя опубликованная книга не найдена.');
 }
+```
 
-$book->title = 'Цвет волшебства';
-$book->author = 'Т. Пратчетт';
-$book->publishedAt = '01.09.1983';
+Обновляем существующий объект:
 
-$updatedBitrixId = EntityMapper::save($book);
+```php
+<?php
+
+use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use Entity\Book;
+
+/** @var Book|null $existBook */
+$existBook = EntityMapper::select(Book::class)->fetch();
+
+if (!$existBook) {
+    throw new InvalidArgumentException('Случайная книга не найдена.');
+}
+
+$existBook->title = 'Забытая книга';
+$existBook->author = 'Неизвестный автор';
+$existBook->publishedAt = null;
+$existBook->acitve = false;
+
+$updatedBitrixId = EntityMapper::save($existBook);
 ```
