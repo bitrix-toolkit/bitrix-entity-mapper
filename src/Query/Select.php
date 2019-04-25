@@ -2,6 +2,7 @@
 
 namespace Sheerockoff\BitrixEntityMapper\Query;
 
+use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlock;
 use CIBlockElement;
 use DateTime;
@@ -279,6 +280,7 @@ class Select
      * @param mixed $value
      * @return array|null
      * @throws InvalidArgumentException
+     * @throws Exception
      */
     protected function getFilterRow($property, $operator, $value)
     {
@@ -290,20 +292,30 @@ class Select
 
         if ($propertyAnnotation instanceof Field) {
             $k = $operator . $propertyAnnotation->getCode();
-            if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+            if ($propertyAnnotation->getType() === Field::TYPE_BOOLEAN) {
                 $v = $value && $value !== 'N' ? 'Y' : 'N';
             } else {
                 $v = $value !== '' && $value !== null ? $value : false;
             }
         } elseif ($propertyAnnotation instanceof Property) {
-            if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+            if ($propertyAnnotation->getType() === Property::TYPE_BOOLEAN) {
                 $k = $operator . 'PROPERTY_' . $propertyAnnotation->getCode() . '_VALUE';
             } else {
                 $k = $operator . 'PROPERTY_' . $propertyAnnotation->getCode();
             }
 
-            if ($propertyAnnotation->getType() === PropertyAnnotationInterface::TYPE_BOOLEAN) {
+            if ($propertyAnnotation->getType() === Property::TYPE_BOOLEAN) {
                 $v = $value && $value !== 'N' ? 'Y' : false;
+            } elseif ($propertyAnnotation->getType() === Property::TYPE_DATETIME) {
+                if (!$value) {
+                    $v = false;
+                } elseif ($value instanceof DateTime) {
+                    $v = $value->format('Y-m-d H:i:s');
+                } elseif ($value instanceof BitrixDateTime) {
+                    $v = $value->format('Y-m-d H:i:s');
+                } else {
+                    $v = (new DateTime($value))->format('Y-m-d H:i:s');
+                }
             } else {
                 $v = $value !== '' && $value !== null ? $value : false;
             }

@@ -261,6 +261,52 @@ final class SelectTest extends TestCase
      * @throws AnnotationException
      * @throws ReflectionException
      */
+    public function testCanSelectByDateTime()
+    {
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', '14.06.1883')->fetchAll();
+        $this->assertCount(1, $books);
+        $book = reset($books);
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('14.06.1883', $book->publishedAt->format('d.m.Y'));
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', '%', '14.06.1883')->fetchAll();
+        $this->assertCount(1, $books);
+        $book = reset($books);
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('14.06.1883', $book->publishedAt->format('d.m.Y'));
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', '<', '01.01.1900')->fetchAll();
+        $this->assertCount(1, $books);
+        $book = reset($books);
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('14.06.1883', $book->publishedAt->format('d.m.Y'));
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', null)->fetchAll();
+        $this->assertCount(0, $books);
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', new DateTime('01.09.1983 00:00:00'))->fetchAll();
+        $this->assertCount(1, $books);
+        $book = reset($books);
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('01.09.1983', $book->publishedAt->format('d.m.Y'));
+
+        /** @var Book[] $books */
+        $books = Select::from(Book::class)->where('publishedAt', BitrixDateTime::createFromPhp(new DateTime('01.09.1983')))->fetchAll();
+        $this->assertCount(1, $books);
+        $book = reset($books);
+        $this->assertInstanceOf(Book::class, $book);
+        $this->assertEquals('01.09.1983', $book->publishedAt->format('d.m.Y'));
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
     public function testCanSelectByRawFilter()
     {
         /** @var Book $book */
