@@ -176,7 +176,7 @@ if (!$existBook) {
 $existBook->title = 'Забытая книга';
 $existBook->author = 'Неизвестный автор';
 $existBook->publishedAt = null;
-$existBook->acitve = false;
+$existBook->active = false;
 
 $updatedBitrixId = EntityMapper::save($existBook);
 ```
