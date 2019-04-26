@@ -126,6 +126,7 @@ $books = EntityMapper::select(Book::class)->whereRaw('ACTIVE', 'Y')->fetchAll();
 ```php
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
+
 /** @var Book|null $book */
 $book = EntityMapper::select(Book::class)->orderBy('publishedAt', 'desc')->fetch();
 ```
