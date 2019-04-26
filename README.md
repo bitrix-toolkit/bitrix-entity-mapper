@@ -50,23 +50,28 @@ class Book
     public $author;
     
     /**
-     * @var DateTime|string|null
+     * @var DateTime|null
      * @Property(code="published_at", type="datetime", name="Дата публикации") 
      */
     public $publishedAt;
 }
 ```
 
-Применяем автоматические миграции:
+Подключаем Bitrix, модуль `iblock` и автолоадинг Composer:
 
 ```php
-<?php
+require 'bitrix/modules/main/include/prolog_before.php';
+require 'vendor/autoload.php';
+CModule::IncludeModule('iblock');
+```
 
+Вручную нужно создать только тип инфоблока. `ShemaBuilder` запускает автоматические миграции, которые
+создадут или изменят необходимый инфоблок и свойства инфоблока для сущности:
+
+```php
 use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
 use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
 use Entity\Book;
-
-require 'vendor/autoload.php';
 
 $entityMap = EntityMap::fromClass(Book::class);
 SchemaBuilder::build($entityMap);
@@ -75,12 +80,8 @@ SchemaBuilder::build($entityMap);
 Сохраняем новый объект:
 
 ```php
-<?php
-
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
-
-require 'vendor/autoload.php';
 
 $book = new Book();
 $book->active = true;
@@ -94,89 +95,56 @@ $bitrixId = EntityMapper::save($book);
 Получаем объект по фильтру сущности:
 
 ```php
-<?php
-
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
-
-require 'vendor/autoload.php';
 
 /** @var Book|null $book */
 $book = EntityMapper::select(Book::class)->where('title', 'Остров сокровищ')->fetch();
 
-if (!$book) {
-    throw new InvalidArgumentException('Книга "Остров сокровищ" не найдена.');
-}
-
 /** @var Book[] $books */
 $books = EntityMapper::select(Book::class)->where('author', '%', 'Стивенсон')->fetchAll();
 
-if (!$books) {
-    throw new InvalidArgumentException('Книги Стивенсона не найдены.');
-}
-
 /** @var Book[] $books */
 $books = EntityMapper::select(Book::class)->where('publishedAt', '<', '01.01.1900')->fetchAll();
-
-if (!$books) {
-    throw new InvalidArgumentException('Книги опубликованные до 1900 года не найдены.');
-}
 ```
 
 Получаем объект по фильтру Bitrix:
 
 ```php
-<?php
-
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
-require 'vendor/autoload.php';
-
 /** @var Book|null $book */
 $book = EntityMapper::select(Book::class)->whereRaw('ID', 1)->fetch();
-if (!$book) {
-    throw new InvalidArgumentException('Не найдена книга с ID элемента инфоблока = 1.');
-}
+
+/** @var Book[] $books */
+$books = EntityMapper::select(Book::class)->whereRaw('ACTIVE', 'Y')->fetchAll();
 ```
 
 Сортируем выборку:
 
 ```php
-<?php
-
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
-
-require 'vendor/autoload.php';
-
 /** @var Book|null $book */
 $book = EntityMapper::select(Book::class)->orderBy('publishedAt', 'desc')->fetch();
-
-if (!$book) {
-    throw new InvalidArgumentException('Последняя опубликованная книга не найдена.');
-}
 ```
 
 Обновляем существующий объект:
 
 ```php
-<?php
-
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 /** @var Book|null $existBook */
 $existBook = EntityMapper::select(Book::class)->fetch();
 
-if (!$existBook) {
-    throw new InvalidArgumentException('Случайная книга не найдена.');
+if ($existBook) {
+    $existBook->title = 'Забытая книга';
+    $existBook->author = 'Неизвестный автор';
+    $existBook->publishedAt = null;
+    $existBook->active = false;
+    
+    $updatedBitrixId = EntityMapper::save($existBook);
 }
-
-$existBook->title = 'Забытая книга';
-$existBook->author = 'Неизвестный автор';
-$existBook->publishedAt = null;
-$existBook->active = false;
-
-$updatedBitrixId = EntityMapper::save($existBook);
 ```
