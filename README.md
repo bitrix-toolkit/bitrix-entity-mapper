@@ -65,7 +65,8 @@ require 'vendor/autoload.php';
 CModule::IncludeModule('iblock');
 ```
 
-Вручную нужно создать только тип инфоблока. `ShemaBuilder` запускает автоматические миграции, которые
+Вручную нужно создать только тип инфоблока. Остальные миграции может выполнить `SсhemaBuilder`. 
+Метод `SchemaBuilder::build($entityMap)` запускает автоматические миграции, которые
 создадут или изменят необходимый инфоблок и свойства инфоблока для сущности:
 
 ```php
@@ -145,7 +146,6 @@ if ($existBook) {
     $existBook->author = 'Неизвестный автор';
     $existBook->publishedAt = null;
     $existBook->active = false;
-    
     $updatedBitrixId = EntityMapper::save($existBook);
 }
 ```
