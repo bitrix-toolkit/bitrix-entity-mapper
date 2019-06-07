@@ -25,12 +25,10 @@ test:
       -e php.short_open_tag=1
       -e php.mbstring.func_overload=2
       -e php.display_errors=1
+      -e MYSQL_HOST="mysql"
+      -e MYSQL_DATABASE="bitrix"
+      -e MYSQL_USER="user"
+      -e MYSQL_PASSWORD="password"
       webdevops/php-dev:5.6
-    - cd bitrix
-    - wget -q -O bitrix.zip $BITRIX_ZIP_URL
-    - unzip bitrix.zip
-    - wget -q -O dump.sql $BITRIX_SQL_URL
-    - docker exec -i mysql mysql -uuser -ppassword < dump.sql
-    - cd ..
     - docker exec -i -w /app/ bitrix composer install -n --prefer-dist
     - docker exec -i -w /app/ bitrix vendor/bin/phpunit --colors=never --coverage-text --whitelist src/
