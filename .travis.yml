@@ -7,11 +7,11 @@ services:
   - mysql
 
 env:
-  - MYSQL_HOST=127.0.0.1
-  - MYSQL_DATABASE=bitrix
-  - MYSQL_USER=root
-  - MYSQL_PASSWORD=
-
+  global:
+    - MYSQL_HOST=127.0.0.1
+    - MYSQL_DATABASE=bitrix
+    - MYSQL_USER=root
+    - MYSQL_PASSWORD=
 
 before_install:
   - mysql -e 'CREATE DATABASE bitrix;'
