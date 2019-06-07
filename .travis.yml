@@ -19,6 +19,10 @@ before_install:
 install:
   - composer install
 
+before_script:
+  - echo 'short_open_tag = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'mbstring.func_overload = 2' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
 script:
   - vendor/bin/phpunit --whitelist src/ --coverage-text --coverage-clover=coverage.clover
 
