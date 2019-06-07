@@ -1,4 +1,4 @@
-<phpunit bootstrap="tests/bootstrap.php" colors="true">
+<phpunit bootstrap="tests/bootstrap.php">
     <testsuites>
         <testsuite name="Functional">
             <file>tests/src/FunctionalTest/BitrixEnvironmentTest.php</file>

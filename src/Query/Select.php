@@ -225,7 +225,7 @@ class Select
     {
         $classRef = new ReflectionClass($this->entityMap->getClass());
         foreach ($this->rawIterator() as $rawResult) {
-            $object = $classRef->newInstance();
+            $object = $classRef->newInstanceWithoutConstructor();
             yield self::hydrate($object, $rawResult->getData());
         }
     }
