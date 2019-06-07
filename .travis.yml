@@ -1,7 +1,20 @@
 language: php
+
 php:
   - "5.6"
-  - "7.0"
+
+services:
+  - mysql
+
+env:
+  - MYSQL_HOST=127.0.0.1
+  - MYSQL_DATABASE=bitrix
+  - MYSQL_USER=root
+  - MYSQL_PASSWORD=
+
+
+before_install:
+  - mysql -e 'CREATE DATABASE bitrix;'
 
 install:
   - composer install
