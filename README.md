@@ -1,5 +1,6 @@
 # Bitrix Entity Mapper
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d699e498b5374e4d979e351f7dccac61)](https://app.codacy.com/app/shirokov/bitrix-entity-mapper?utm_source=github.com&utm_medium=referral&utm_content=sheerockoff/bitrix-entity-mapper&utm_campaign=Badge_Grade_Settings)
 [![build status](https://travis-ci.com/sheerockoff/bitrix-entity-mapper.svg?branch=master)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
 [![php version](https://img.shields.io/packagist/php-v/sheerockoff/bitrix-entity-mapper.svg)](https://packagist.org/packages/sheerockoff/bitrix-entity-mapper)
 
