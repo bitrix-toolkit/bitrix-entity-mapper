@@ -7,7 +7,7 @@
 
 ## Установка
 
-```
+```bash
 composer require sheerockoff/bitrix-entity-mapper:dev-master
 ```
 
@@ -63,7 +63,7 @@ require 'vendor/autoload.php';
 CModule::IncludeModule('iblock');
 ```
 
-Вручную нужно создать только тип инфоблока. Остальные миграции может выполнить `SсhemaBuilder`. 
+Вручную нужно создать только тип инфоблока. Остальные миграции может выполнить `SchemaBuilder`. 
 Метод `SchemaBuilder::build($entityMap)` запускает автоматические миграции, которые
 создадут или изменят необходимый инфоблок и свойства инфоблока для сущности:
 
