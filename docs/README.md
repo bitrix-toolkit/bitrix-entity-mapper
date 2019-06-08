@@ -1,15 +1,14 @@
 # Bitrix Entity Mapper
 
-[![coverage report](https://gitlab.com/sheerockoff/bitrix-entity-mapper/badges/master/coverage.svg)](https://gitlab.com/sheerockoff/bitrix-entity-mapper/-/jobs)
-[![pipeline status](https://gitlab.com/sheerockoff/bitrix-entity-mapper/badges/master/pipeline.svg)](https://gitlab.com/sheerockoff/bitrix-entity-mapper/pipelines)
-[![php version](https://img.shields.io/packagist/php-v/sheerockoff/bitrix-entity-mapper.svg)](https://packagist.org/packages/sheerockoff/bitrix-entity-mapper)
-[![bitrix version](https://img.shields.io/badge/bitrix-v18.1.5-red.svg)](https://www.1c-bitrix.ru/download/cms.php)
+[![Codacy coverage](https://img.shields.io/codacy/coverage/d699e498b5374e4d979e351f7dccac61.svg)](https://app.codacy.com/app/shirokov/bitrix-entity-mapper)
+[![Codacy grade](https://img.shields.io/codacy/grade/d699e498b5374e4d979e351f7dccac61.svg)](https://app.codacy.com/app/shirokov/bitrix-entity-mapper)
+[![Travis (.com)](https://img.shields.io/travis/com/sheerockoff/bitrix-entity-mapper.svg)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
 
 Альтернативный ORM для Bitrix.
 
 ## Установка
 
-```
+```bash
 composer require sheerockoff/bitrix-entity-mapper:dev-master
 ```
 
@@ -65,7 +64,7 @@ require 'vendor/autoload.php';
 CModule::IncludeModule('iblock');
 ```
 
-Вручную нужно создать только тип инфоблока. Остальные миграции может выполнить `SсhemaBuilder`. 
+Вручную нужно создать только тип инфоблока. Остальные миграции может выполнить `SchemaBuilder`. 
 Метод `SchemaBuilder::build($entityMap)` запускает автоматические миграции, которые
 создадут или изменят необходимый инфоблок и свойства инфоблока для сущности:
 
