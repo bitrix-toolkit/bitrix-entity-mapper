@@ -1,8 +1,8 @@
 # Bitrix Entity Mapper
 
-[![Build Status](https://travis-ci.com/sheerockoff/bitrix-entity-mapper.svg?branch=master)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/test_coverage)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/maintainability)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/maintainability)
+[![Build Status](https://img.shields.io/travis/com/sheerockoff/bitrix-entity-mapper.svg)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
+[![Test Coverage](https://img.shields.io/codeclimate/coverage/sheerockoff/bitrix-entity-mapper.svg)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/test_coverage)
+[![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/sheerockoff/bitrix-entity-mapper.svg)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/maintainability)
 
 Альтернативный ORM для Bitrix.
 
