@@ -27,9 +27,12 @@ install:
 before_script:
   - echo 'short_open_tag = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'mbstring.func_overload = 2' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 script:
   - php vendor/bin/phpunit --whitelist src/ --coverage-text --coverage-clover=coverage.xml
 
 after_script:
-  - php vendor/bin/codacycoverage clover coverage.xml
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t clover coverage.xml
