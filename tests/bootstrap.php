@@ -11,6 +11,10 @@ $db = mysqli_connect(
     getenv('MYSQL_DATABASE')
 );
 
+if (!$db) {
+    exit('Mysql connection error.');
+}
+
 $sqlDump = new SqlDump(__DIR__ . '/../vendor/sheerockoff/bitrix-ci/dump.sql');
 foreach ($sqlDump->parse() as $query) {
     mysqli_query($db, $query);
