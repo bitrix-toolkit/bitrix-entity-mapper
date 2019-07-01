@@ -235,53 +235,74 @@ class EntityMapper
         });
 
         foreach ($entityProperties as $entityProperty) {
-            $key = $entityProperty->getCode();
-            self::assert(array_key_exists($key, $data), "Ключ $key не найден в массиве данных полученных из объекта.");
-            $value = $data[$key];
-
-            $needClass = $entityProperty->getAnnotation()->getEntity();
-            if ($entityProperty->getAnnotation()->isMultiple()) {
-                $objects = !empty($value) ? $value : [];
-                self::assert(is_array($objects), 'Множественное значение должно быть массивом.');
-                foreach ($objects as $object) {
-                    self::assert(is_object($object), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
-                    self::assert($object instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
-                }
-            } else {
-                if (!empty($value)) {
-                    self::assert(is_object($value), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
-                    self::assert($value instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
-                }
-            }
+            self::checkChildEntity($entityProperty, $data);
         }
 
         $entityData = [];
         foreach ($entityProperties as $entityProperty) {
-            $key = $entityProperty->getCode();
-            if ($entityProperty->getAnnotation()->isMultiple()) {
-                $objects = $data[$key];
-                if (empty($objects)) {
-                    $entityData[$key] = false;
-                    continue;
-                }
-
-                foreach ($objects as $object) {
-                    $objectId = self::save($object);
-                    $entityData[$key][] = $objectId;
-                }
-            } else {
-                $object = $data[$key];
-                if (empty($object)) {
-                    $entityData[$key] = false;
-                    continue;
-                }
-
-                $objectId = self::save($object);
-                $entityData[$key] = $objectId;
-            }
+            $entityPropertyData = self::saveChildEntity($entityProperty, $data);
+            $entityData += $entityPropertyData;
         }
 
         return $entityData;
+    }
+
+    /**
+     * @param PropertyMap $entityProperty
+     * @param array $data
+     * @return array
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    protected static function saveChildEntity(PropertyMap $entityProperty, array $data)
+    {
+        $entityData = [];
+        $key = $entityProperty->getCode();
+
+        $rawValue = array_key_exists($key, $data) ? $data[$key] : null;
+        if (empty($rawValue)) {
+            $entityData[$key] = false;
+            return $entityData;
+        }
+
+        if ($entityProperty->getAnnotation()->isMultiple()) {
+            foreach ($rawValue as $object) {
+                $objectId = self::save($object);
+                $entityData[$key][] = $objectId;
+            }
+        } else {
+            $objectId = self::save($rawValue);
+            $entityData[$key] = $objectId;
+        }
+
+        return $entityData;
+    }
+
+    /**
+     * @param PropertyMap $entityProperty
+     * @param array $data
+     * @throws InvalidArgumentException
+     */
+    protected static function checkChildEntity(PropertyMap $entityProperty, array $data)
+    {
+        $key = $entityProperty->getCode();
+        self::assert(array_key_exists($key, $data), "Ключ $key не найден в массиве данных полученных из объекта.");
+        $value = $data[$key];
+
+        $needClass = $entityProperty->getAnnotation()->getEntity();
+        if ($entityProperty->getAnnotation()->isMultiple()) {
+            $objects = !empty($value) ? $value : [];
+            self::assert(is_array($objects), 'Множественное значение должно быть массивом.');
+            foreach ($objects as $object) {
+                self::assert(is_object($object), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
+                self::assert($object instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
+            }
+        } else {
+            if (!empty($value)) {
+                self::assert(is_object($value), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
+                self::assert($value instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
+            }
+        }
     }
 
     /**
