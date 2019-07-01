@@ -289,19 +289,17 @@ class EntityMapper
         self::assert(array_key_exists($key, $data), "Ключ $key не найден в массиве данных полученных из объекта.");
         $value = $data[$key];
 
-        $needClass = $entityProperty->getAnnotation()->getEntity();
         if ($entityProperty->getAnnotation()->isMultiple()) {
-            $objects = !empty($value) ? $value : [];
+            $objects = $value ? $value : [];
             self::assert(is_array($objects), 'Множественное значение должно быть массивом.');
-            foreach ($objects as $object) {
-                self::assert(is_object($object), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
-                self::assert($object instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
-            }
         } else {
-            if (!empty($value)) {
-                self::assert(is_object($value), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
-                self::assert($value instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
-            }
+            $objects = $value ? [$value] : [];
+        }
+
+        $needClass = $entityProperty->getAnnotation()->getEntity();
+        foreach ($objects as $object) {
+            self::assert(is_object($object), 'Значение типа ' . Property::TYPE_ENTITY . ' должно быть объектом.');
+            self::assert($object instanceof $needClass, "Объект должен быть экземпляром класса $needClass.");
         }
     }
 
