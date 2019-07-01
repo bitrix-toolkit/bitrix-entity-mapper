@@ -2,6 +2,7 @@
 
 namespace Sheerockoff\BitrixEntityMapper\Query;
 
+use _CIBElement;
 use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlock;
 use CIBlockElement;
@@ -124,93 +125,20 @@ class Select
      */
     public function rawIterator()
     {
-        $infoBlockType = $this->entityMap->getAnnotation()->getType();
-        $infoBlockCode = $this->entityMap->getAnnotation()->getCode();
-        $infoBlock = CIBlock::GetList(null, [
-            'TYPE' => $infoBlockType,
-            'CODE' => $infoBlockCode,
-            'CHECK_PERMISSIONS' => 'N'
-        ])->Fetch();
+        $filter = $this->getInfoBlockFilter();
 
-        self::assert(!empty($infoBlock['ID']), "Инфоблок с кодом $infoBlockCode и типом $infoBlockType не найден.");
-
-        $filter = ['=IBLOCK_ID' => $infoBlock['ID']];
         foreach ($this->where as $entry) {
             list($property, $operator, $value) = $entry;
             $filter += $this->getFilterRow($property, $operator, $value);
         }
 
         $filter = array_merge($filter, $this->whereRaw);
-
-        $order = [];
-        foreach ($this->orderBy as $property => $direction) {
-            $propertyAnnotation = $this->entityMap->getProperty($property)->getAnnotation();
-            if ($propertyAnnotation instanceof Field) {
-                $order[$propertyAnnotation->getCode()] = $direction;
-            } elseif ($propertyAnnotation instanceof Property) {
-                $order['PROPERTY_' . $propertyAnnotation->getCode()] = $direction;
-            }
-        }
-
-        /** @var PropertyMap[] $fields */
-        $fields = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
-            return $propertyMap->getAnnotation() instanceof Field;
-        });
-
-        /** @var PropertyMap[] $properties */
-        $properties = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
-            return $propertyMap->getAnnotation() instanceof Property;
-        });
+        $order = $this->getOrderingRules();
 
         $rs = CIBlockElement::GetList($order, $filter);
         while ($element = $rs->GetNextElement()) {
-            $data = [];
-
+            $data = array_merge($this->getFieldsData($element), $this->getPropertiesData($element));
             $elementFields = $element->GetFields();
-            foreach ($fields as $field) {
-                $key = $field->getAnnotation()->getCode();
-                self::assert(
-                    array_key_exists($key, $elementFields),
-                    "Поле $key не найдено в результатах CIBlockElement::GetList()."
-                );
-
-                $data[$field->getCode()] = self::normalizeValue(
-                    $elementFields[$key],
-                    $field->getAnnotation()->getType()
-                );
-            }
-
-            $elementProperties = $element->GetProperties();
-            foreach ($properties as $property) {
-                $key = $property->getAnnotation()->getCode();
-                self::assert(
-                    array_key_exists($key, $elementProperties) && array_key_exists('VALUE', $elementProperties[$key]),
-                    "Свойство $key не найдено в результатах CIBlockElement::GetList()."
-                );
-
-                if ($property->getAnnotation()->isMultiple()) {
-                    if (is_array($elementProperties[$key]['VALUE'])) {
-                        $value = array_map(function ($value) use ($property) {
-                            return self::normalizeValue(
-                                $value,
-                                $property->getAnnotation()->getType(),
-                                $property->getAnnotation()->getEntity()
-                            );
-                        }, $elementProperties[$key]['VALUE']);
-                    } else {
-                        $value = [];
-                    }
-                } else {
-                    $value = self::normalizeValue(
-                        $elementProperties[$key]['VALUE'],
-                        $property->getAnnotation()->getType(),
-                        $property->getAnnotation()->getEntity()
-                    );
-                }
-
-                $data[$property->getCode()] = $value;
-            }
-
             yield new RawResult($elementFields['ID'], $elementFields['IBLOCK_ID'], $data);
         }
     }
@@ -275,6 +203,25 @@ class Select
     }
 
     /**
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    protected function getInfoBlockFilter()
+    {
+        $infoBlockType = $this->entityMap->getAnnotation()->getType();
+        $infoBlockCode = $this->entityMap->getAnnotation()->getCode();
+        $infoBlock = CIBlock::GetList(null, [
+            'TYPE' => $infoBlockType,
+            'CODE' => $infoBlockCode,
+            'CHECK_PERMISSIONS' => 'N'
+        ])->Fetch();
+
+        self::assert(!empty($infoBlock['ID']), "Инфоблок с кодом $infoBlockCode и типом $infoBlockType не найден.");
+
+        return ['=IBLOCK_ID' => $infoBlock['ID']];
+    }
+
+    /**
      * @param string $property
      * @param string $operator
      * @param mixed $value
@@ -322,6 +269,107 @@ class Select
         }
 
         return $k ? [$k => $v] : null;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getOrderingRules()
+    {
+        $order = [];
+        foreach ($this->orderBy as $property => $direction) {
+            $propertyAnnotation = $this->entityMap->getProperty($property)->getAnnotation();
+            if ($propertyAnnotation instanceof Field) {
+                $order[$propertyAnnotation->getCode()] = $direction;
+            } elseif ($propertyAnnotation instanceof Property) {
+                $order['PROPERTY_' . $propertyAnnotation->getCode()] = $direction;
+            }
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param _CIBElement $element
+     * @return array
+     * @throws Exception
+     */
+    protected function getFieldsData(_CIBElement $element)
+    {
+        /** @var PropertyMap[] $fields */
+        $fields = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
+            return $propertyMap->getAnnotation() instanceof Field;
+        });
+
+        $data = [];
+        $elementFields = $element->GetFields();
+        foreach ($fields as $field) {
+            $key = $field->getAnnotation()->getCode();
+            self::assert(
+                array_key_exists($key, $elementFields),
+                "Поле $key не найдено в результатах CIBlockElement::GetList()."
+            );
+
+            $data[$field->getCode()] = self::normalizeValue(
+                $elementFields[$key],
+                $field->getAnnotation()->getType()
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param _CIBElement $element
+     * @return array
+     * @throws Exception
+     */
+    protected function getPropertiesData(_CIBElement $element)
+    {
+        /** @var PropertyMap[] $properties */
+        $properties = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
+            return $propertyMap->getAnnotation() instanceof Property;
+        });
+
+        $data = [];
+        $elementProperties = $element->GetProperties();
+        foreach ($properties as $property) {
+            $key = $property->getAnnotation()->getCode();
+            self::assert(
+                array_key_exists($key, $elementProperties) && array_key_exists('VALUE', $elementProperties[$key]),
+                "Свойство $key не найдено в результатах CIBlockElement::GetList()."
+            );
+
+            $rawValue = $elementProperties[$key]['VALUE'];
+            $data[$property->getCode()] = self::normalizePropertyValue($property, $rawValue);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param PropertyMap $property
+     * @param mixed $rawValue
+     * @return mixed
+     * @throws Exception
+     */
+    protected static function normalizePropertyValue(PropertyMap $property, $rawValue)
+    {
+        if ($property->getAnnotation()->isMultiple()) {
+            return array_map(function ($value) use ($property) {
+                return self::normalizeValue(
+                    $value,
+                    $property->getAnnotation()->getType(),
+                    $property->getAnnotation()->getEntity()
+                );
+            }, is_array($rawValue) ? $rawValue : []);
+        } else {
+            return self::normalizeValue(
+                $rawValue,
+                $property->getAnnotation()->getType(),
+                $property->getAnnotation()->getEntity()
+            );
+        }
     }
 
     /**
