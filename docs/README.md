@@ -1,9 +1,5 @@
 # Bitrix Entity Mapper
 
-[![Build Status](https://img.shields.io/travis/com/sheerockoff/bitrix-entity-mapper.svg)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
-[![Test Coverage](https://img.shields.io/codeclimate/coverage/sheerockoff/bitrix-entity-mapper.svg)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/test_coverage)
-[![Maintainability](https://img.shields.io/codeclimate/maintainability-percentage/sheerockoff/bitrix-entity-mapper.svg)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/maintainability)
-
 Альтернативный ORM для Bitrix.
 
 ## Установка
