@@ -272,28 +272,49 @@ class Select
      */
     protected static function getPropertyFilterRow($type, $code, $operator, $value)
     {
-        if ($type === Property::TYPE_BOOLEAN) {
-            $k = "{$operator}PROPERTY_{$code}_VALUE";
-            $v = $value && $value !== 'N' ? 'Y' : false;
-            return [$k => $v];
-        }
+        $k = self::getPropertyFilterKey($type, $code, $operator);
+        $v = self::getPropertyFilterValue($type, $value);
+        return [$k => $v];
+    }
 
-        $k = "{$operator}PROPERTY_{$code}";
+    /**
+     * @param string $type
+     * @param string $code
+     * @param string $operator
+     * @return string
+     */
+    protected static function getPropertyFilterKey($type, $code, $operator)
+    {
+        if ($type === Property::TYPE_BOOLEAN) {
+            return "{$operator}PROPERTY_{$code}_VALUE";
+        } else {
+            return "{$operator}PROPERTY_{$code}";
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $value
+     * @return mixed
+     * @throws Exception
+     */
+    protected static function getPropertyFilterValue($type, $value)
+    {
+        if ($type === Property::TYPE_BOOLEAN) {
+            return $value && $value !== 'N' ? 'Y' : false;
+        }
 
         if ($type === Property::TYPE_DATETIME) {
             if (!$value) {
-                $v = false;
-            } elseif ($value instanceof DateTime || $value instanceof BitrixDateTime) {
-                $v = $value->format('Y-m-d H:i:s');
-            } else {
-                $v = (new DateTime($value))->format('Y-m-d H:i:s');
+                return false;
             }
 
-            return [$k => $v];
+            /** @var DateTime|BitrixDateTime $dateTime */
+            $dateTime = $value instanceof DateTime || $value instanceof BitrixDateTime ? $value : new DateTime($value);
+            return $dateTime->format('Y-m-d H:i:s');
         }
 
-        $v = $value !== '' && $value !== null ? $value : false;
-        return [$k => $v];
+        return ($value === '' || $value === null) ? false : $value;
     }
 
     /**
