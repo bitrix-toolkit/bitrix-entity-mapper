@@ -14,6 +14,7 @@
             <file>tests/src/UnitTest/Map/EntityMapTest.php</file>
             <file>tests/src/UnitTest/Query/RawResultTest.php</file>
             <file>tests/src/UnitTest/Query/SelectTest.php</file>
+            <file>tests/src/UnitTest/Query/DataBuilderTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
