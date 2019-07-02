@@ -233,42 +233,67 @@ class Select
     {
         $propertyMap = $this->entityMap->getProperty($property);
         $propertyAnnotation = $propertyMap->getAnnotation();
-
-        $k = null;
-        $v = null;
+        $type = $propertyAnnotation->getType();
+        $code = $propertyAnnotation->getCode();
 
         if ($propertyAnnotation instanceof Field) {
-            $k = $operator . $propertyAnnotation->getCode();
-            if ($propertyAnnotation->getType() === Field::TYPE_BOOLEAN) {
-                $v = $value && $value !== 'N' ? 'Y' : 'N';
-            } else {
-                $v = $value !== '' && $value !== null ? $value : false;
-            }
-        } elseif ($propertyAnnotation instanceof Property) {
-            if ($propertyAnnotation->getType() === Property::TYPE_BOOLEAN) {
-                $k = $operator . 'PROPERTY_' . $propertyAnnotation->getCode() . '_VALUE';
-            } else {
-                $k = $operator . 'PROPERTY_' . $propertyAnnotation->getCode();
-            }
+            return $this->getFieldFilterRow($type, $code, $operator, $value);
+        } else {
+            return $this->getPropertyFilterRow($type, $code, $operator, $value);
+        }
+    }
 
-            if ($propertyAnnotation->getType() === Property::TYPE_BOOLEAN) {
-                $v = $value && $value !== 'N' ? 'Y' : false;
-            } elseif ($propertyAnnotation->getType() === Property::TYPE_DATETIME) {
-                if (!$value) {
-                    $v = false;
-                } elseif ($value instanceof DateTime) {
-                    $v = $value->format('Y-m-d H:i:s');
-                } elseif ($value instanceof BitrixDateTime) {
-                    $v = $value->format('Y-m-d H:i:s');
-                } else {
-                    $v = (new DateTime($value))->format('Y-m-d H:i:s');
-                }
-            } else {
-                $v = $value !== '' && $value !== null ? $value : false;
-            }
+    /**
+     * @param string $type
+     * @param string $code
+     * @param string $operator
+     * @param mixed $value
+     * @return array
+     */
+    protected static function getFieldFilterRow($type, $code, $operator, $value)
+    {
+        $k = $operator . $code;
+        if ($type === Field::TYPE_BOOLEAN) {
+            $v = $value && $value !== 'N' ? 'Y' : 'N';
+        } else {
+            $v = $value !== '' && $value !== null ? $value : false;
         }
 
-        return $k ? [$k => $v] : null;
+        return [$k => $v];
+    }
+
+    /**
+     * @param string $type
+     * @param string $code
+     * @param string $operator
+     * @param mixed $value
+     * @return array
+     * @throws Exception
+     */
+    protected static function getPropertyFilterRow($type, $code, $operator, $value)
+    {
+        if ($type === Property::TYPE_BOOLEAN) {
+            $k = "{$operator}PROPERTY_{$code}_VALUE";
+            $v = $value && $value !== 'N' ? 'Y' : false;
+            return [$k => $v];
+        }
+
+        $k = "{$operator}PROPERTY_{$code}";
+
+        if ($type === Property::TYPE_DATETIME) {
+            if (!$value) {
+                $v = false;
+            } elseif ($value instanceof DateTime || $value instanceof BitrixDateTime) {
+                $v = $value->format('Y-m-d H:i:s');
+            } else {
+                $v = (new DateTime($value))->format('Y-m-d H:i:s');
+            }
+
+            return [$k => $v];
+        }
+
+        $v = $value !== '' && $value !== null ? $value : false;
+        return [$k => $v];
     }
 
     /**
