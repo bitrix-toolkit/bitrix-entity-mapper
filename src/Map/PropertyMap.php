@@ -2,7 +2,10 @@
 
 namespace Sheerockoff\BitrixEntityMapper\Map;
 
+use Doctrine\Common\Annotations\AnnotationException;
+use InvalidArgumentException;
 use ReflectionProperty;
+use Sheerockoff\BitrixEntityMapper\Annotation\AnnotationReader;
 use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
 
 class PropertyMap
@@ -33,6 +36,40 @@ class PropertyMap
         $this->code = $code;
         $this->annotation = $annotation;
         $this->reflection = $reflection;
+    }
+
+    /**
+     * @param ReflectionProperty $propRef
+     * @return PropertyMap|null
+     * @throws AnnotationException
+     */
+    public static function fromReflectionProperty(ReflectionProperty $propRef)
+    {
+        $annotationReader = new AnnotationReader();
+        $propAnnotations = $annotationReader->getPropertyAnnotations($propRef);
+        $propAnnotations = array_filter($propAnnotations, function ($propAnnotation) {
+            return $propAnnotation instanceof PropertyAnnotationInterface;
+        });
+
+        if (!$propAnnotations) {
+            return null;
+        }
+
+        if (count($propAnnotations) > 1) {
+            $annotationClasses = array_map(function ($propAnnotation) {
+                return get_class($propAnnotation);
+            }, $propAnnotations);
+
+            throw new InvalidArgumentException(
+                'Аннотации ' . '@' . implode(', @', $annotationClasses) .
+                ' свойства ' . $propRef->getName() . ' класса ' . $propRef->getDeclaringClass()->getName() .
+                ' не могут быть применены одновременно.'
+            );
+        }
+
+        /** @var PropertyAnnotationInterface $propAnnotation */
+        $propAnnotation = reset($propAnnotations);
+        return new PropertyMap($propRef->getName(), $propAnnotation, $propRef);
     }
 
     /**

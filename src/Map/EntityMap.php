@@ -8,7 +8,6 @@ use ReflectionClass;
 use ReflectionException;
 use Sheerockoff\BitrixEntityMapper\Annotation\AnnotationReader;
 use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
 
 class EntityMap
 {
@@ -68,30 +67,10 @@ class EntityMap
 
         $propertyMaps = [];
         foreach ($classRef->getProperties() as $propRef) {
-            $propAnnotations = $annotationReader->getPropertyAnnotations($propRef);
-            $propAnnotations = array_filter($propAnnotations, function ($propAnnotation) {
-                return $propAnnotation instanceof PropertyAnnotationInterface;
-            });
-
-            if (!$propAnnotations) {
-                continue;
+            $propertyMap = PropertyMap::fromReflectionProperty($propRef);
+            if ($propertyMap) {
+                $propertyMaps[] = $propertyMap;
             }
-
-            if (count($propAnnotations) > 1) {
-                $annotationClasses = array_map(function ($propAnnotation) {
-                    return get_class($propAnnotation);
-                }, $propAnnotations);
-
-                throw new InvalidArgumentException(
-                    'Аннотации ' . '@' . implode(', @', $annotationClasses) .
-                    ' свойства ' . $propRef->getName() . ' класса ' . $classRef->getName() .
-                    ' не могут быть применены одновременно.'
-                );
-            }
-
-            /** @var PropertyAnnotationInterface $propAnnotation */
-            $propAnnotation = reset($propAnnotations);
-            $propertyMaps[] = new PropertyMap($propRef->getName(), $propAnnotation, $propRef);
         }
 
         $entityMap = new self($classRef->getName(), $classAnnotation, $classRef, $propertyMaps);
