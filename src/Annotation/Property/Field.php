@@ -38,16 +38,16 @@ final class Field extends AbstractPropertyAnnotation implements PropertyAnnotati
      */
     private static function getTypeByCode($code)
     {
-        if (in_array($code, ['ID', 'SORT'])) {
-            return self::TYPE_INTEGER;
-        } elseif (in_array($code, ['ACTIVE'])) {
-            return self::TYPE_BOOLEAN;
-        } elseif (in_array($code, ['DATE_ACTIVE_FROM', 'DATE_ACTIVE_TO'])) {
-            return self::TYPE_DATETIME;
-        } elseif (in_array($code, ['PREVIEW_PICTURE', 'DETAIL_PICTURE'])) {
-            return self::TYPE_FILE;
-        } else {
-            return self::TYPE_STRING;
-        }
+        $map = [
+            'ID' => self::TYPE_INTEGER,
+            'SORT' => self::TYPE_INTEGER,
+            'ACTIVE' => self::TYPE_BOOLEAN,
+            'DATE_ACTIVE_FROM' => self::TYPE_DATETIME,
+            'DATE_ACTIVE_TO' => self::TYPE_DATETIME,
+            'PREVIEW_PICTURE' => self::TYPE_FILE,
+            'DETAIL_PICTURE' => self::TYPE_FILE
+        ];
+
+        return array_key_exists($code, $map) ? $map[$code] : self::TYPE_STRING;
     }
 }
