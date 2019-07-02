@@ -476,7 +476,6 @@ class EntityMapper
     }
 
     /**
-     * @param string $code
      * @param mixed $value
      * @return BitrixDateTime|bool
      * @throws Exception
@@ -487,19 +486,19 @@ class EntityMapper
             return false;
         }
 
-        if ($value instanceof DateTime) {
-            return BitrixDateTime::createFromTimestamp($value->getTimestamp());
-        }
-
         if ($value instanceof BitrixDateTime) {
             return $value;
         }
 
-        if (preg_match('/^-?\d+$/us', (string)$value)) {
-            return BitrixDateTime::createFromTimestamp($value);
+        if ($value instanceof DateTime) {
+            $dateTime = BitrixDateTime::createFromTimestamp($value->getTimestamp());
+        } elseif (preg_match('/^-?\d+$/us', (string)$value)) {
+            $dateTime = BitrixDateTime::createFromTimestamp($value);
+        } else {
+            $dateTime = BitrixDateTime::createFromPhp(new DateTime($value));
         }
 
-        return BitrixDateTime::createFromPhp(new DateTime($value));
+        return $dateTime;
     }
 
     /**
