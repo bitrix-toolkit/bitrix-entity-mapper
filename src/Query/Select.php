@@ -305,16 +305,33 @@ class Select
         }
 
         if ($type === Property::TYPE_DATETIME) {
-            if (!$value) {
-                return false;
-            }
-
-            /** @var DateTime|BitrixDateTime $dateTime */
-            $dateTime = $value instanceof DateTime || $value instanceof BitrixDateTime ? $value : new DateTime($value);
-            return $dateTime->format('Y-m-d H:i:s');
+            $dateTime = self::toDateTime($value);
+            return $dateTime ? $dateTime->format('Y-m-d H:i:s') : false;
         }
 
         return ($value === '' || $value === null) ? false : $value;
+    }
+
+    /**
+     * @param mixed $value
+     * @return DateTime|null
+     * @throws Exception
+     */
+    protected static function toDateTime($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if ($value instanceof DateTime) {
+            return $value;
+        }
+
+        if ($value instanceof BitrixDateTime) {
+            return DateTime::createFromFormat('Y-m-d H:i:s', $value->format('Y-m-d H:i:s'));
+        }
+
+        return new DateTime($value);
     }
 
     /**
