@@ -3,10 +3,7 @@
 namespace Sheerockoff\BitrixEntityMapper\Query;
 
 use _CIBElement;
-use Bitrix\Main\Type\DateTime as BitrixDateTime;
-use CIBlock;
 use CIBlockElement;
-use DateTime;
 use Doctrine\Common\Annotations\AnnotationException;
 use Exception;
 use Generator;
@@ -124,14 +121,9 @@ class Select
      */
     public function rawIterator()
     {
-        $filter = $this->getInfoBlockFilter();
+        $filterBuilder = new FilterBuilder($this->entityMap, $this->where, $this->whereRaw);
 
-        foreach ($this->where as $entry) {
-            list($property, $operator, $value) = $entry;
-            $filter += $this->getFilterRow($property, $operator, $value);
-        }
-
-        $filter = array_merge($filter, $this->whereRaw);
+        $filter = $filterBuilder->getFilter();
         $order = $this->getOrderingRules();
 
         $rs = CIBlockElement::GetList($order, $filter);
@@ -203,138 +195,6 @@ class Select
 
     /**
      * @return array
-     * @throws InvalidArgumentException
-     */
-    protected function getInfoBlockFilter()
-    {
-        $infoBlockType = $this->entityMap->getAnnotation()->getType();
-        $infoBlockCode = $this->entityMap->getAnnotation()->getCode();
-        $infoBlock = CIBlock::GetList(null, [
-            'TYPE' => $infoBlockType,
-            'CODE' => $infoBlockCode,
-            'CHECK_PERMISSIONS' => 'N'
-        ])->Fetch();
-
-        self::assert(!empty($infoBlock['ID']), "Инфоблок с кодом $infoBlockCode и типом $infoBlockType не найден.");
-
-        return ['=IBLOCK_ID' => $infoBlock['ID']];
-    }
-
-    /**
-     * @param string $property
-     * @param string $operator
-     * @param mixed $value
-     * @return array|null
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    protected function getFilterRow($property, $operator, $value)
-    {
-        $propertyMap = $this->entityMap->getProperty($property);
-        $propertyAnnotation = $propertyMap->getAnnotation();
-        $type = $propertyAnnotation->getType();
-        $code = $propertyAnnotation->getCode();
-
-        if ($propertyAnnotation instanceof Field) {
-            return $this->getFieldFilterRow($type, $code, $operator, $value);
-        } else {
-            return $this->getPropertyFilterRow($type, $code, $operator, $value);
-        }
-    }
-
-    /**
-     * @param string $type
-     * @param string $code
-     * @param string $operator
-     * @param mixed $value
-     * @return array
-     */
-    protected static function getFieldFilterRow($type, $code, $operator, $value)
-    {
-        $k = $operator . $code;
-        if ($type === Field::TYPE_BOOLEAN) {
-            $v = $value && $value !== 'N' ? 'Y' : 'N';
-        } else {
-            $v = $value !== '' && $value !== null ? $value : false;
-        }
-
-        return [$k => $v];
-    }
-
-    /**
-     * @param string $type
-     * @param string $code
-     * @param string $operator
-     * @param mixed $value
-     * @return array
-     * @throws Exception
-     */
-    protected static function getPropertyFilterRow($type, $code, $operator, $value)
-    {
-        $k = self::getPropertyFilterKey($type, $code, $operator);
-        $v = self::getPropertyFilterValue($type, $value);
-        return [$k => $v];
-    }
-
-    /**
-     * @param string $type
-     * @param string $code
-     * @param string $operator
-     * @return string
-     */
-    protected static function getPropertyFilterKey($type, $code, $operator)
-    {
-        if ($type === Property::TYPE_BOOLEAN) {
-            return "{$operator}PROPERTY_{$code}_VALUE";
-        } else {
-            return "{$operator}PROPERTY_{$code}";
-        }
-    }
-
-    /**
-     * @param string $type
-     * @param mixed $value
-     * @return mixed
-     * @throws Exception
-     */
-    protected static function getPropertyFilterValue($type, $value)
-    {
-        if ($type === Property::TYPE_BOOLEAN) {
-            return $value && $value !== 'N' ? 'Y' : false;
-        }
-
-        if ($type === Property::TYPE_DATETIME) {
-            $dateTime = self::toDateTime($value);
-            return $dateTime ? $dateTime->format('Y-m-d H:i:s') : false;
-        }
-
-        return ($value === '' || $value === null) ? false : $value;
-    }
-
-    /**
-     * @param mixed $value
-     * @return DateTime|null
-     * @throws Exception
-     */
-    protected static function toDateTime($value)
-    {
-        if (!$value) {
-            return null;
-        }
-
-        if ($value instanceof DateTime) {
-            return $value;
-        }
-
-        if ($value instanceof BitrixDateTime) {
-            return DateTime::createFromFormat('Y-m-d H:i:s', $value->format('Y-m-d H:i:s'));
-        }
-
-        return new DateTime($value);
-    }
-
-    /**
-     * @return array
      */
     protected function getOrderingRules()
     {
@@ -372,10 +232,7 @@ class Select
                 "Поле $key не найдено в результатах CIBlockElement::GetList()."
             );
 
-            $data[$field->getCode()] = self::normalizeValue(
-                $elementFields[$key],
-                $field->getAnnotation()->getType()
-            );
+            $data[$field->getCode()] = RawResult::normalizeValue($field, $elementFields[$key]);
         }
 
         return $data;
@@ -403,99 +260,10 @@ class Select
             );
 
             $rawValue = $elementProperties[$key]['VALUE'];
-            $data[$property->getCode()] = self::normalizePropertyValue($property, $rawValue);
+            $data[$property->getCode()] = RawResult::normalizePropertyValue($property, $rawValue);
         }
 
         return $data;
-    }
-
-    /**
-     * @param PropertyMap $property
-     * @param mixed $rawValue
-     * @return mixed
-     * @throws Exception
-     */
-    protected static function normalizePropertyValue(PropertyMap $property, $rawValue)
-    {
-        if ($property->getAnnotation()->isMultiple()) {
-            return array_map(function ($value) use ($property) {
-                return self::normalizeValue(
-                    $value,
-                    $property->getAnnotation()->getType(),
-                    $property->getAnnotation()->getEntity()
-                );
-            }, is_array($rawValue) ? $rawValue : []);
-        } else {
-            return self::normalizeValue(
-                $rawValue,
-                $property->getAnnotation()->getType(),
-                $property->getAnnotation()->getEntity()
-            );
-        }
-    }
-
-    /**
-     * @param mixed $value
-     * @param string $type
-     * @param string|null $entity
-     * @return mixed
-     * @throws Exception
-     */
-    protected static function normalizeValue($value, $type, $entity = null)
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $map = [
-            Property::TYPE_ENTITY => [self::class, 'normalizeEntityValue'],
-            Property::TYPE_BOOLEAN => [self::class, 'normalizeBooleanValue'],
-            Property::TYPE_INTEGER => [self::class, 'normalizeNumericValue'],
-            Property::TYPE_FLOAT => [self::class, 'normalizeNumericValue'],
-            Property::TYPE_DATETIME => [self::class, 'normalizeDateTimeValue'],
-        ];
-
-        return array_key_exists($type, $map) ? call_user_func($map[$type], $value, $entity) : $value;
-    }
-
-    /**
-     * @param int $value
-     * @param string $entity
-     * @return object|null
-     * @throws AnnotationException
-     * @throws ReflectionException
-     */
-    protected static function normalizeEntityValue($value, $entity)
-    {
-        return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
-    }
-
-    /**
-     * @param mixed $value
-     * @return bool
-     */
-    protected static function normalizeBooleanValue($value)
-    {
-        return $value && $value !== 'N' ? true : false;
-    }
-
-    /**
-     * @param mixed $value
-     * @return int|float
-     */
-    protected static function normalizeNumericValue($value)
-    {
-        return $value + 0;
-    }
-
-    /**
-     * @param mixed $value
-     * @return DateTime
-     * @throws Exception
-     */
-    protected static function normalizeDateTimeValue($value)
-    {
-        return new DateTime($value);
     }
 
     /**
