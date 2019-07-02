@@ -16,7 +16,6 @@ use ReflectionException;
 use ReflectionObject;
 use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
 use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
 use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
 use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
 
@@ -446,17 +445,27 @@ class Select
     {
         if ($value === null) {
             return null;
-        } elseif ($type === PropertyAnnotationInterface::TYPE_ENTITY) {
-            return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
-        } elseif ($type === PropertyAnnotationInterface::TYPE_BOOLEAN) {
-            return $value && $value !== 'N' ? true : false;
-        } elseif (in_array($type, [PropertyAnnotationInterface::TYPE_INTEGER, PropertyAnnotationInterface::TYPE_FLOAT])) {
-            return $value + 0;
-        } elseif ($type === PropertyAnnotationInterface::TYPE_DATETIME) {
-            return new DateTime($value);
-        } else {
-            return $value;
         }
+
+        $map = [
+            Property::TYPE_ENTITY => function () use ($value, $entity) {
+                return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
+            },
+            Property::TYPE_BOOLEAN => function () use ($value) {
+                return $value && $value !== 'N' ? true : false;
+            },
+            Property::TYPE_INTEGER => function () use ($value) {
+                return $value + 0;
+            },
+            Property::TYPE_FLOAT => function () use ($value) {
+                return $value + 0;
+            },
+            Property::TYPE_DATETIME => function () use ($value) {
+                return new DateTime($value);
+            }
+        ];
+
+        return array_key_exists($type, $map) ? call_user_func($map[$type]) : $value;
     }
 
     /**
