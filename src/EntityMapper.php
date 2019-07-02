@@ -440,44 +440,66 @@ class EntityMapper
     protected static function normalizeValueForBitrix(PropertyMap $propertyMap, $value, $infoBlockId)
     {
         if ($propertyMap->getAnnotation()->getType() === Property::TYPE_BOOLEAN) {
-            if ($value) {
-                $yesEnum = CIBlockProperty::GetPropertyEnum(
-                    $propertyMap->getAnnotation()->getCode(),
-                    null,
-                    [
-                        'IBLOCK_ID' => $infoBlockId,
-                        'XML_ID' => 'Y',
-                        'VALUE' => 'Y'
-                    ]
-                )->Fetch();
-
-                self::assert(
-                    !empty($yesEnum['ID']),
-                    'Не найден ID варианта ответа Y для булевого значения свойства '
-                    . $propertyMap->getAnnotation()->getCode() . '.'
-                );
-
-                $value = $yesEnum['ID'];
-            } else {
-                $value = false;
-            }
+            return self::normalizeBooleanForBitrix($propertyMap->getAnnotation()->getCode(), $value, $infoBlockId);
         } elseif ($propertyMap->getAnnotation()->getType() === Property::TYPE_DATETIME) {
-            if ($value) {
-                if ($value instanceof DateTime) {
-                    $value = BitrixDateTime::createFromTimestamp($value->getTimestamp());
-                } elseif ($value instanceof BitrixDateTime) {
-                    // pass
-                } elseif (preg_match('/^-?\d+$/us', (string)$value)) {
-                    $value = BitrixDateTime::createFromTimestamp($value);
-                } else {
-                    $value = BitrixDateTime::createFromPhp(new DateTime($value));
-                }
-            } else {
-                $value = false;
-            }
+            return self::normalizeDateTimeForBitrix($value);
+        } else {
+            return $value;
+        }
+    }
+
+    /**
+     * @param string $code
+     * @param mixed $value
+     * @param int $infoBlockId
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    protected static function normalizeBooleanForBitrix($code, $value, $infoBlockId)
+    {
+        if (!$value) {
+            return false;
         }
 
-        return $value;
+        $yesEnum = CIBlockProperty::GetPropertyEnum($code, null, [
+            'IBLOCK_ID' => $infoBlockId,
+            'XML_ID' => 'Y',
+            'VALUE' => 'Y'
+        ])->Fetch();
+
+        self::assert(
+            !empty($yesEnum['ID']),
+            'Не найден ID варианта ответа Y для булевого значения свойства ' . $code . '.'
+        );
+
+        return $yesEnum['ID'];
+    }
+
+    /**
+     * @param string $code
+     * @param mixed $value
+     * @return BitrixDateTime|bool
+     * @throws Exception
+     */
+    protected static function normalizeDateTimeForBitrix($value)
+    {
+        if (!$value) {
+            return false;
+        }
+
+        if ($value instanceof DateTime) {
+            return BitrixDateTime::createFromTimestamp($value->getTimestamp());
+        }
+
+        if ($value instanceof BitrixDateTime) {
+            return $value;
+        }
+
+        if (preg_match('/^-?\d+$/us', (string)$value)) {
+            return BitrixDateTime::createFromTimestamp($value);
+        }
+
+        return BitrixDateTime::createFromPhp(new DateTime($value));
     }
 
     /**

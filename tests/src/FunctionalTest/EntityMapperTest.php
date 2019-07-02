@@ -3,6 +3,7 @@
 namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
 
 use _CIBElement;
+use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlockElement;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationException;
@@ -325,6 +326,20 @@ final class EntityMapperTest extends TestCase
         );
 
         $book->publishedAt = DateTime::createFromFormat('d.m.Y H:i:s', '10.08.1883 00:00:00')->getTimestamp();
+        $updatedId = EntityMapper::save($book);
+        $this->assertEquals($id, $updatedId);
+
+        $element = CIBlockElement::GetList(null, ['ID' => $id])->GetNextElement();
+        $this->assertInstanceOf(_CIBElement::class, $element);
+        $properties = $element->GetProperties();
+
+        $this->assertEquals(
+            DateTime::createFromFormat('d.m.Y H:i:s', '10.08.1883 00:00:00')->getTimestamp(),
+            (new DateTime($properties['published_at']['VALUE']))->getTimestamp()
+        );
+
+        $dateTime = DateTime::createFromFormat('d.m.Y H:i:s', '10.08.1883 00:00:00');
+        $book->publishedAt = BitrixDateTime::createFromPhp($dateTime);
         $updatedId = EntityMapper::save($book);
         $this->assertEquals($id, $updatedId);
 
