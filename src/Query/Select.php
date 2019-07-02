@@ -448,24 +448,54 @@ class Select
         }
 
         $map = [
-            Property::TYPE_ENTITY => function () use ($value, $entity) {
-                return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
-            },
-            Property::TYPE_BOOLEAN => function () use ($value) {
-                return $value && $value !== 'N' ? true : false;
-            },
-            Property::TYPE_INTEGER => function () use ($value) {
-                return $value + 0;
-            },
-            Property::TYPE_FLOAT => function () use ($value) {
-                return $value + 0;
-            },
-            Property::TYPE_DATETIME => function () use ($value) {
-                return new DateTime($value);
-            }
+            Property::TYPE_ENTITY => [self::class, 'normalizeEntityValue'],
+            Property::TYPE_BOOLEAN => [self::class, 'normalizeBooleanValue'],
+            Property::TYPE_INTEGER => [self::class, 'normalizeNumericValue'],
+            Property::TYPE_FLOAT => [self::class, 'normalizeNumericValue'],
+            Property::TYPE_DATETIME => [self::class, 'normalizeDateTimeValue'],
         ];
 
-        return array_key_exists($type, $map) ? call_user_func($map[$type]) : $value;
+        return array_key_exists($type, $map) ? call_user_func($map[$type], $value, $entity) : $value;
+    }
+
+    /**
+     * @param int $value
+     * @param string $entity
+     * @return object|null
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    protected static function normalizeEntityValue($value, $entity)
+    {
+        return $value ? self::from($entity)->whereRaw('ID', $value)->fetch() : null;
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    protected static function normalizeBooleanValue($value)
+    {
+        return $value && $value !== 'N' ? true : false;
+    }
+
+    /**
+     * @param mixed $value
+     * @return int|float
+     */
+    protected static function normalizeNumericValue($value)
+    {
+        return $value + 0;
+    }
+
+    /**
+     * @param mixed $value
+     * @return DateTime
+     * @throws Exception
+     */
+    protected static function normalizeDateTimeValue($value)
+    {
+        return new DateTime($value);
     }
 
     /**
