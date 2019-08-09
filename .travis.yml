@@ -31,7 +31,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
-  - php vendor/bin/phpunit --whitelist src/ --coverage-text --coverage-clover=clover.xml
+  - php vendor/bin/phpunit --whitelist src/ --coverage-text --coverage-clover clover.xml
 
 after_script:
-  - ./cc-test-reporter after-build -t clover
+  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then ./cc-test-reporter after-build -t clover; fi

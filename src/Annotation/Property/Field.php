@@ -15,7 +15,7 @@ final class Field extends AbstractPropertyAnnotation implements PropertyAnnotati
      * @Required
      * @Enum({
      *     "ID", "ACTIVE", "NAME", "CODE", "XML_ID", "SORT", "DATE_ACTIVE_FROM", "DATE_ACTIVE_TO",
-     *     "PREVIEW_TEXT", "PREVIEW_PICTURE", "DETAIL_TEXT", "DETAIL_PICTURE"
+     *     "PREVIEW_TEXT", "PREVIEW_PICTURE", "DETAIL_TEXT", "DETAIL_PICTURE", "SECTION_ID"
      * })
      */
     protected $code;
@@ -45,7 +45,8 @@ final class Field extends AbstractPropertyAnnotation implements PropertyAnnotati
             'DATE_ACTIVE_FROM' => self::TYPE_DATETIME,
             'DATE_ACTIVE_TO' => self::TYPE_DATETIME,
             'PREVIEW_PICTURE' => self::TYPE_FILE,
-            'DETAIL_PICTURE' => self::TYPE_FILE
+            'DETAIL_PICTURE' => self::TYPE_FILE,
+            'SECTION_ID' => self::TYPE_INTEGER,
         ];
 
         return array_key_exists($code, $map) ? $map[$code] : self::TYPE_STRING;
