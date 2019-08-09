@@ -9,7 +9,7 @@
 ## Установка
 
 ```bash
-composer require sheerockoff/bitrix-entity-mapper:dev-master
+composer require sheerockoff/bitrix-entity-mapper
 ```
 
 ## Быстрый старт
