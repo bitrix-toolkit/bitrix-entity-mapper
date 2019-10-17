@@ -225,7 +225,6 @@ final class SelectTest extends TestCase
         $this->assertNull($select->key());
         $this->assertNull($select->current());
 
-
         $select->rewind();
         $this->assertTrue($select->valid());
         $this->assertEquals(0, $select->key());
