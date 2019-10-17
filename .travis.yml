@@ -11,8 +11,9 @@ services:
   - mysql
 
 env:
-  - BITRIX=v18.5
-  - BITRIX=v19.0
+  jobs:
+    - BITRIX=v18.5
+    - BITRIX=v19.0
   global:
     - MYSQL_HOST=127.0.0.1
     - MYSQL_DATABASE=bitrix
