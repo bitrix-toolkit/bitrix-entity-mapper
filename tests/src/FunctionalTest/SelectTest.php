@@ -150,12 +150,16 @@ final class SelectTest extends TestCase
 
         /** @var Book[] $books */
         $books = [];
+        $iteration = 0;
         foreach ($select->iterator() as $book) {
+            $iteration++;
+            $this->assertLessThanOrEqual(2, $iteration, 'Итератор уходит в бесконечный цикл.');
             $books[] = $book;
         }
 
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
         $this->assertCount(2, $books);
+        $this->assertNotEquals($books[0]->getId(), $books[1]->getId());
     }
 
     /**
@@ -169,6 +173,7 @@ final class SelectTest extends TestCase
         $books = $select->fetchAll();
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
         $this->assertCount(2, $books);
+        $this->assertNotEquals($books[0]->getId(), $books[1]->getId());
     }
 
     /**
@@ -180,13 +185,61 @@ final class SelectTest extends TestCase
         $select = Select::from(Book::class);
         $this->assertInstanceOf(Select::class, $select);
 
+        /** @var Book[] $books */
         $books = [];
+        $iteration = 0;
         while ($book = $select->fetch()) {
+            $iteration++;
+            $this->assertLessThanOrEqual(2, $iteration, 'Итератор уходит в бесконечный цикл.');
             $books[] = $book;
         }
 
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
         $this->assertCount(2, $books);
+        $this->assertNotEquals($books[0]->getId(), $books[1]->getId());
+    }
+
+    /**
+     * @throws AnnotationException
+     * @throws ReflectionException
+     */
+    public function testIteratorInterfaceImplementation()
+    {
+        $select = Select::from(Book::class);
+        $this->assertInstanceOf(Select::class, $select);
+
+        /** @var Book[] $books */
+        $books = [];
+        $iteration = 0;
+        foreach ($select as $book) {
+            $iteration++;
+            $this->assertLessThanOrEqual(2, $iteration, 'Итератор уходит в бесконечный цикл.');
+            $books[] = $book;
+        }
+
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+        $this->assertCount(2, $books);
+        $this->assertNotEquals($books[0]->getId(), $books[1]->getId());
+
+        $this->assertFalse($select->valid());
+        $this->assertNull($select->key());
+        $this->assertNull($select->current());
+
+
+        $select->rewind();
+        $this->assertTrue($select->valid());
+        $this->assertEquals(0, $select->key());
+        $this->assertInstanceOf(Book::class, $select->current());
+
+        $select->next();
+        $this->assertTrue($select->valid());
+        $this->assertEquals(1, $select->key());
+        $this->assertInstanceOf(Book::class, $select->current());
+
+        $select->next();
+        $this->assertFalse($select->valid());
+        $this->assertNull($select->key());
+        $this->assertNull($select->current());
     }
 
     /**

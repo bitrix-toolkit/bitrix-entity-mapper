@@ -92,7 +92,32 @@ $book->publishedAt = new DateTime('1883-06-14 00:00:00');
 $bitrixId = EntityMapper::save($book);
 ```
 
-Получаем объект по фильтру сущности:
+Есть несколько способов перебрать результат:
+
+```php
+use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use Entity\Book;
+
+$query = EntityMapper::select(Book::class)->where('author', 'Р. Л. Стивенсон');
+
+// Получить один результат.
+$query->fetch(); 
+
+// Перебрать по одному результату.
+while ($book = $query->fetch()) { /* ... */ }
+
+// Использовать реализованную имплементацию интерфейса Iterator.
+foreach ($query as $book) { /* ... */ }
+
+// Использовать метод возвращающий генератор.
+foreach ($query->iterator() as $book) { /* ... */ }
+
+// Получить массив со всеми результатами. 
+// Не рекомендуется! Небезопасное потребление памяти.
+$query->fetchAll();
+```
+
+Получаем результат по фильтру сущности:
 
 ```php
 use Sheerockoff\BitrixEntityMapper\EntityMapper;
@@ -108,7 +133,7 @@ $books = EntityMapper::select(Book::class)->where('author', '%', 'Стивенс
 $books = EntityMapper::select(Book::class)->where('publishedAt', '<', '01.01.1900')->fetchAll();
 ```
 
-Получаем объект по фильтру Bitrix:
+Получаем результат по фильтру Bitrix:
 
 ```php
 use Sheerockoff\BitrixEntityMapper\EntityMapper;

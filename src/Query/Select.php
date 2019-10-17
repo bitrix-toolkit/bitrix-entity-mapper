@@ -8,6 +8,7 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Exception;
 use Generator;
 use InvalidArgumentException;
+use Iterator;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionObject;
@@ -16,7 +17,7 @@ use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
 use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
 use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
 
-class Select
+class Select implements Iterator
 {
     protected $entityMap;
     protected $whereRaw = [];
@@ -289,5 +290,62 @@ class Select
         }
 
         return $object;
+    }
+
+    /**
+     * Вернуть текущий объект.
+     *
+     * @return object
+     * @throws ReflectionException
+     */
+    public function current()
+    {
+        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
+        return $this->iterator->current();
+    }
+
+    /**
+     * Переместить курсор к следующему объекту.
+     *
+     * @throws ReflectionException
+     */
+    public function next()
+    {
+        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
+        $this->iterator->next();
+    }
+
+    /**
+     * Вернуть индекс текущего объекта.
+     *
+     * @return int
+     * @throws ReflectionException
+     */
+    public function key()
+    {
+        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
+        return $this->iterator->key();
+    }
+
+    /**
+     * Проверить текущую позицию курсора.
+     *
+     * @return bool
+     * @throws ReflectionException
+     */
+    public function valid()
+    {
+        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
+        return $this->iterator->valid();
+    }
+
+    /**
+     * Начать новую итерацию.
+     *
+     * @throws ReflectionException
+     */
+    public function rewind()
+    {
+        $this->iterator = $this->iterator();
     }
 }
