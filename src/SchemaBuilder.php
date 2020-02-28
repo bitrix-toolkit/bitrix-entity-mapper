@@ -4,6 +4,7 @@ namespace Sheerockoff\BitrixEntityMapper;
 
 use CIBlock;
 use CIBlockProperty;
+use CSite;
 use InvalidArgumentException;
 use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
 use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
@@ -43,7 +44,7 @@ class SchemaBuilder
         $name = $annotation->getName();
 
         $fields = [
-            'LID' => SITE_ID,
+            'LID' => self::getSiteCodes(),
             'CODE' => $code,
             'IBLOCK_TYPE_ID' => $type,
             'NAME' => $name ? $name : $code,
@@ -64,6 +65,20 @@ class SchemaBuilder
         }
 
         return $iBlockId;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected static function getSiteCodes()
+    {
+        $siteCodes = [];
+        $rs = CSite::GetList($by, $order);
+        while ($site = $rs->Fetch()) {
+            $siteCodes = $site['LID'];
+        }
+
+        return $siteCodes;
     }
 
     /**
