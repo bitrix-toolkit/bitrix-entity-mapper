@@ -1,6 +1,6 @@
 # Bitrix Entity Mapper
 
-[![Build Status](https://travis-ci.com/sheerockoff/bitrix-entity-mapper.svg?branch=master)](https://travis-ci.com/sheerockoff/bitrix-entity-mapper)
+[![PHPUnit](https://github.com/sheerockoff/bitrix-entity-mapper/workflows/PHPUnit/badge.svg)](https://github.com/sheerockoff/bitrix-entity-mapper/actions)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/test_coverage)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/maintainability)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/maintainability)
 
