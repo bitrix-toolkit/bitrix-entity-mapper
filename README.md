@@ -1,8 +1,8 @@
 # Bitrix Entity Mapper
 
 [![PHPUnit](https://github.com/sheerockoff/bitrix-entity-mapper/workflows/PHPUnit/badge.svg)](https://github.com/sheerockoff/bitrix-entity-mapper/actions)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/test_coverage)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0d09026c52b8f7a32343/maintainability)](https://codeclimate.com/github/sheerockoff/bitrix-entity-mapper/maintainability)
+[![Coverage](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/?branch=master)
+[![Scrutinizer](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/?branch=master)
 
 Альтернативный ORM для Bitrix.
 
