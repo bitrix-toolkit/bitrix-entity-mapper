@@ -23,6 +23,8 @@ final class SchemaBuilderTest extends TestCase
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
         self::clearBitrixCache();
+        self::deleteSites();
+        self::addSites();
         self::addInfoBlockType();
     }
 
@@ -30,6 +32,7 @@ final class SchemaBuilderTest extends TestCase
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
+        self::deleteSites();
         self::clearBitrixCache();
     }
 

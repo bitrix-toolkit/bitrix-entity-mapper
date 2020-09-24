@@ -75,7 +75,7 @@ class SchemaBuilder
         $siteCodes = [];
         $rs = CSite::GetList($by, $order);
         while ($site = $rs->Fetch()) {
-            $siteCodes = $site['LID'];
+            $siteCodes[] = $site['LID'];
         }
 
         return $siteCodes;

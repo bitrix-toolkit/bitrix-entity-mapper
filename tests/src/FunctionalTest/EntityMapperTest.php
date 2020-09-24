@@ -28,6 +28,8 @@ final class EntityMapperTest extends TestCase
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
         self::clearBitrixCache();
+        self::deleteSites();
+        self::addSites();
         self::addInfoBlockType();
         SchemaBuilder::build(EntityMap::fromClass(Book::class));
         SchemaBuilder::build(EntityMap::fromClass(Author::class));
@@ -37,6 +39,7 @@ final class EntityMapperTest extends TestCase
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
+        self::deleteSites();
         self::clearBitrixCache();
     }
 

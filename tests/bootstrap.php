@@ -4,11 +4,17 @@ use Sheerockoff\BitrixCi\Bootstrap;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-echo "SQL dump migrating...";
-Bootstrap::migrate();
-echo "COMPLETE\n";
+if (!getenv('SKIP_MIGRATION')) {
+    echo "Migration...";
+    Bootstrap::migrate();
+    echo "COMPLETE\n";
+}
 
 Bootstrap::bootstrap();
+
+while (ob_get_level()) {
+    ob_end_clean();
+}
 
 require __DIR__ . '/resources/Entity/Book.php';
 require __DIR__ . '/resources/Entity/Author.php';

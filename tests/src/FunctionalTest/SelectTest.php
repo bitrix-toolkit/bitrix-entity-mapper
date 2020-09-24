@@ -31,6 +31,8 @@ final class SelectTest extends TestCase
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
         self::clearBitrixCache();
+        self::deleteSites();
+        self::addSites();
         self::addInfoBlockType();
         SchemaBuilder::build(EntityMap::fromClass(Author::class));
         SchemaBuilder::build(EntityMap::fromClass(Book::class));
@@ -42,6 +44,7 @@ final class SelectTest extends TestCase
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
+        self::deleteSites();
         self::clearBitrixCache();
     }
 
