@@ -59,7 +59,7 @@ class EntityMap
         $annotationReader = new AnnotationReader();
         $classRef = new ReflectionClass($class);
 
-        /** @var InfoBlock $classAnnotation */
+        /** @var InfoBlock|null $classAnnotation */
         $classAnnotation = $annotationReader->getClassAnnotation($classRef, InfoBlock::class);
         if (!$classAnnotation) {
             throw new InvalidArgumentException('Нет аннотации @' . InfoBlock::class . ' для класса ' . $classRef->getName() . '.');
@@ -116,13 +116,10 @@ class EntityMap
      */
     public function getProperty($code)
     {
-        /** @var PropertyMap $propertyMap */
-        $propertyMap = reset(array_filter($this->properties, function (PropertyMap $property) use ($code) {
-            return $property->getCode() === $code;
-        }));
-
-        if ($propertyMap instanceof PropertyMap) {
-            return $propertyMap;
+        foreach ($this->properties as $property) {
+            if ($property->getCode() === $code) {
+                return $property;
+            }
         }
 
         throw new InvalidArgumentException("Свойство $code не объявлено в сущности.");

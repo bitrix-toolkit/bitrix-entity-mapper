@@ -129,9 +129,11 @@ class Select implements Iterator
 
         $rs = CIBlockElement::GetList($order, $filter);
         while ($element = $rs->GetNextElement()) {
-            $data = array_merge($this->getFieldsData($element), $this->getPropertiesData($element));
-            $elementFields = $element->GetFields();
-            yield new RawResult($elementFields['ID'], $elementFields['IBLOCK_ID'], $data);
+            if ($element instanceof _CIBElement) {
+                $data = array_merge($this->getFieldsData($element), $this->getPropertiesData($element));
+                $elementFields = $element->GetFields();
+                yield new RawResult($elementFields['ID'], $elementFields['IBLOCK_ID'], $data);
+            }
         }
     }
 
@@ -158,10 +160,10 @@ class Select implements Iterator
      */
     public function fetch()
     {
-        if (!isset($this->iterator)) {
-            $this->iterator = $this->iterator();
-        } else {
+        if (isset($this->iterator)) {
             $this->iterator->next();
+        } else {
+            $this->iterator = $this->iterator();
         }
 
         return $this->iterator->current();

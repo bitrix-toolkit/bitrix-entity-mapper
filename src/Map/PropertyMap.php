@@ -51,7 +51,7 @@ class PropertyMap
             return $propAnnotation instanceof PropertyAnnotationInterface;
         });
 
-        if (!$propAnnotations) {
+        if (empty($propAnnotations)) {
             return null;
         }
 

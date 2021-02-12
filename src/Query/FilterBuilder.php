@@ -157,7 +157,7 @@ class FilterBuilder
 
         if ($type === Property::TYPE_DATETIME) {
             $dateTime = self::toDateTime($value);
-            return $dateTime ? $dateTime->format('Y-m-d H:i:s') : false;
+            return $dateTime instanceof DateTime ? $dateTime->format('Y-m-d H:i:s') : false;
         }
 
         return ($value === '' || $value === null) ? false : $value;
@@ -165,7 +165,7 @@ class FilterBuilder
 
     /**
      * @param mixed $value
-     * @return DateTime|null
+     * @return DateTime|false|null
      * @throws Exception
      */
     protected static function toDateTime($value)

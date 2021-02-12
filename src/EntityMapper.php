@@ -71,7 +71,7 @@ class EntityMapper
         $bitrixProperties = DataBuilder::getBitrixProperties($entityMap, $data, $bitrixFields['IBLOCK_ID']);
 
         $addFields = $bitrixFields;
-        if ($bitrixProperties) {
+        if (!empty($bitrixProperties)) {
             $addFields['PROPERTY_VALUES'] = $bitrixProperties;
         }
 
@@ -93,7 +93,7 @@ class EntityMapper
     {
         $changedData = self::getChangedData($exist->getData(), $data);
 
-        if (!$changedData) {
+        if (empty($changedData)) {
             return $exist->getId();
         }
 
@@ -141,7 +141,7 @@ class EntityMapper
             );
         });
 
-        if (!$changedFields) {
+        if (empty($changedFields)) {
             return;
         }
 
@@ -170,7 +170,7 @@ class EntityMapper
             );
         });
 
-        if (!$changedProperties) {
+        if (empty($changedProperties)) {
             return;
         }
 
@@ -320,7 +320,7 @@ class EntityMapper
         $data = self::entityToArray($entityMap, $object);
 
         $exist = null;
-        if ($primaryKeys) {
+        if (!empty($primaryKeys)) {
             $select = Select::from($entityMap->getClass());
             foreach ($primaryKeys as $primaryKey) {
                 $key = $primaryKey->getReflection()->getName();
