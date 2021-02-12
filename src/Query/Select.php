@@ -25,7 +25,7 @@ class Select implements Iterator
     protected $orderBy = [];
 
     /** @var Generator|null */
-    protected $iterator;
+    protected $generator;
 
     /**
      * Select constructor.
@@ -160,13 +160,13 @@ class Select implements Iterator
      */
     public function fetch()
     {
-        if (isset($this->iterator)) {
-            $this->iterator->next();
+        if (isset($this->generator)) {
+            $this->generator->next();
         } else {
-            $this->iterator = $this->iterator();
+            $this->generator = $this->iterator();
         }
 
-        return $this->iterator->current();
+        return $this->generator->current();
     }
 
     /**
@@ -302,8 +302,8 @@ class Select implements Iterator
      */
     public function current()
     {
-        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
-        return $this->iterator->current();
+        $this->generator = isset($this->generator) ? $this->generator : $this->iterator();
+        return $this->generator->current();
     }
 
     /**
@@ -313,20 +313,20 @@ class Select implements Iterator
      */
     public function next()
     {
-        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
-        $this->iterator->next();
+        $this->generator = isset($this->generator) ? $this->generator : $this->iterator();
+        $this->generator->next();
     }
 
     /**
      * Вернуть индекс текущего объекта.
      *
-     * @return int
+     * @return mixed
      * @throws ReflectionException
      */
     public function key()
     {
-        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
-        return $this->iterator->key();
+        $this->generator = isset($this->generator) ? $this->generator : $this->iterator();
+        return $this->generator->key();
     }
 
     /**
@@ -337,8 +337,8 @@ class Select implements Iterator
      */
     public function valid()
     {
-        $this->iterator = isset($this->iterator) ? $this->iterator : $this->iterator();
-        return $this->iterator->valid();
+        $this->generator = isset($this->generator) ? $this->generator : $this->iterator();
+        return $this->generator->valid();
     }
 
     /**
@@ -348,6 +348,6 @@ class Select implements Iterator
      */
     public function rewind()
     {
-        $this->iterator = $this->iterator();
+        $this->generator = $this->iterator();
     }
 }
