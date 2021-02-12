@@ -23,8 +23,6 @@ class Select implements Iterator
     protected $whereRaw = [];
     protected $where = [];
     protected $orderBy = [];
-
-    /** @var Generator|null */
     protected $generator;
 
     /**
@@ -160,7 +158,7 @@ class Select implements Iterator
      */
     public function fetch()
     {
-        if (isset($this->generator)) {
+        if ($this->generator instanceof Generator) {
             $this->generator->next();
         } else {
             $this->generator = $this->iterator();
@@ -221,7 +219,6 @@ class Select implements Iterator
      */
     protected function getFieldsData(_CIBElement $element)
     {
-        /** @var PropertyMap[] $fields */
         $fields = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
             return $propertyMap->getAnnotation() instanceof Field;
         });
@@ -248,7 +245,6 @@ class Select implements Iterator
      */
     protected function getPropertiesData(_CIBElement $element)
     {
-        /** @var PropertyMap[] $properties */
         $properties = array_filter($this->entityMap->getProperties(), function (PropertyMap $propertyMap) {
             return $propertyMap->getAnnotation() instanceof Property;
         });
