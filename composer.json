@@ -15,7 +15,7 @@
     }
   },
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.3",
     "ext-mysqli": "*",
     "doctrine/annotations": "^1.4"
   },
@@ -27,6 +27,6 @@
   "require-dev": {
     "phpunit/phpunit": "^5.7",
     "symfony/var-dumper": "^3.4",
-    "sheerockoff/bitrix-ci": "^18.5"
+    "sheerockoff/bitrix-ci": "^21.400"
   }
 }
