@@ -23,7 +23,7 @@ final class EntityMapperTest extends TestCase
      * @throws AnnotationException
      * @throws ReflectionException
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
@@ -35,7 +35,7 @@ final class EntityMapperTest extends TestCase
         SchemaBuilder::build(EntityMap::fromClass(Author::class));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
