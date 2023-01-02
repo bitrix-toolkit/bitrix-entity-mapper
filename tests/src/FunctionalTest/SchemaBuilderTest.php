@@ -18,7 +18,7 @@ use Sheerockoff\BitrixEntityMapper\Test\TestCase;
 
 final class SchemaBuilderTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
@@ -28,7 +28,7 @@ final class SchemaBuilderTest extends TestCase
         self::addInfoBlockType();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();

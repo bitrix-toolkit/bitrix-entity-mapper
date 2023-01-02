@@ -26,7 +26,7 @@ final class SelectTest extends TestCase
      * @throws AnnotationException
      * @throws ReflectionException
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
@@ -40,7 +40,7 @@ final class SelectTest extends TestCase
         self::$bookIds = self::addBooks();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::deleteInfoBlocks();
         self::deleteInfoBlockType();
