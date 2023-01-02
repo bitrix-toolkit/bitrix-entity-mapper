@@ -5,13 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        PHP: [ "5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2" ]
-        Bitrix: [ "18.5", "19.0", "20.0", "20.5" ]
-        exclude:
-          - { PHP: "5.6", Bitrix: "20.0" }
-          - { PHP: "5.6", Bitrix: "20.5" }
-          - { PHP: "7.0", Bitrix: "20.0" }
-          - { PHP: "7.0", Bitrix: "20.5" }
+        PHP: [ "7.3", "7.4", "8.0", "8.1", "8.2" ]
+        Bitrix: [ "21.400" ]
     container:
       image: webdevops/php-dev:${{ matrix.PHP }}
       env:
