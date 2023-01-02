@@ -5,9 +5,9 @@ use Sheerockoff\BitrixCi\Bootstrap;
 require __DIR__ . '/../vendor/autoload.php';
 
 if (!getenv('SKIP_MIGRATION')) {
-    echo "Migration...";
+    ConsoleLog("Migration...");
     Bootstrap::migrate();
-    echo "COMPLETE\n";
+    ConsoleLog("COMPLETE\n");
 }
 
 Bootstrap::bootstrap();
@@ -20,3 +20,8 @@ require __DIR__ . '/resources/Entity/Book.php';
 require __DIR__ . '/resources/Entity/Author.php';
 require __DIR__ . '/resources/Entity/WithoutInfoBlockAnnotation.php';
 require __DIR__ . '/resources/Entity/WithConflictPropertyAnnotations.php';
+
+function ConsoleLog(string $message): void
+{
+    file_put_contents('php://stdout', $message);
+}

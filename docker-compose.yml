@@ -1,7 +1,7 @@
 version: "3"
 services:
   bitrix:
-    image: webdevops/php-dev:5.6
+    image: webdevops/php-dev:7.3
     depends_on:
       - mysql
     volumes:
