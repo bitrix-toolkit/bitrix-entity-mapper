@@ -26,6 +26,11 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v1
+      
+      - name: Fix for https://github.com/actions/runner-images/issues/6775
+        run: |
+          chown root:root .
+          git config --global --add safe.directory /__w/bitrix-entity-mapper/bitrix-entity-mapper
 
       - name: Set up environment
         run: |
