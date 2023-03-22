@@ -33,6 +33,7 @@ final class RawResultTest extends TestCase
      */
     public function testNoAssertOnSuccess()
     {
+        $this->expectNotToPerformAssertions();
         $rawResultRef = new ReflectionClass(RawResult::class);
         $assertRef = $rawResultRef->getMethod('assert');
         $assertRef->setAccessible(true);

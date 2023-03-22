@@ -140,7 +140,7 @@ class RawResult
      */
     protected static function normalizeNumericValue($value)
     {
-        return $value + 0;
+        return strstr($value, '.') ? (float)$value : (int)$value;
     }
 
     /**
