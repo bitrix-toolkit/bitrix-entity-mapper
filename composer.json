@@ -6,7 +6,11 @@
   "authors": [
     {
       "name": "Vitalik Shirokov",
-      "email": "shirokov@vitalik.pw"
+      "email": "vitalik.shirokov@gmail.com"
+    },
+    {
+      "name": "Vitaly Artemyev",
+      "email": "mail@vitalyart.ru"
     }
   ],
   "autoload": {
