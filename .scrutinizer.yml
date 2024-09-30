@@ -1,4 +1,6 @@
 build:
+  environment:
+    php: 7.4.33
   nodes:
     analysis:
       tests:
