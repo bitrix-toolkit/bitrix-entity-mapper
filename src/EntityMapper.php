@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper;
+namespace BitrixToolkit\BitrixEntityMapper;
 
 use CIBlockElement;
 use DateTime;
@@ -8,13 +8,13 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
-use Sheerockoff\BitrixEntityMapper\Query\DataBuilder;
-use Sheerockoff\BitrixEntityMapper\Query\RawResult;
-use Sheerockoff\BitrixEntityMapper\Query\Select;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Query\DataBuilder;
+use BitrixToolkit\BitrixEntityMapper\Query\RawResult;
+use BitrixToolkit\BitrixEntityMapper\Query\Select;
 
 class EntityMapper
 {

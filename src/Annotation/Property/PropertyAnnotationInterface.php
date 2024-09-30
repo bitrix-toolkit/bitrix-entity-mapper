@@ -1,6 +1,6 @@
 <?php // @codeCoverageIgnoreStart
 
-namespace Sheerockoff\BitrixEntityMapper\Annotation\Property;
+namespace BitrixToolkit\BitrixEntityMapper\Annotation\Property;
 
 interface PropertyAnnotationInterface
 {

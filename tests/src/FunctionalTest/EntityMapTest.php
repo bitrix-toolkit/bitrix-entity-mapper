@@ -1,19 +1,19 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\FunctionalTest;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class EntityMapTest extends TestCase
 {

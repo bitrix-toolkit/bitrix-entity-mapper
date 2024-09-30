@@ -1,12 +1,12 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest\Query;
 
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Query\DataBuilder;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Query\DataBuilder;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 class DataBuilderTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest\Map;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest\Map;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
@@ -8,8 +8,8 @@ use Entity\WithConflictPropertyAnnotations;
 use Entity\WithoutInfoBlockAnnotation;
 use InvalidArgumentException;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class EntityMapTest extends TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Query;
 
 use DateTime;
 use Exception;
 use InvalidArgumentException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
 
 class RawResult
 {

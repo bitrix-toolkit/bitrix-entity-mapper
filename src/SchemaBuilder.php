@@ -1,14 +1,14 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper;
+namespace BitrixToolkit\BitrixEntityMapper;
 
 use CIBlock;
 use CIBlockProperty;
 use CSite;
 use InvalidArgumentException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
 
 class SchemaBuilder
 {

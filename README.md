@@ -1,15 +1,15 @@
 # Bitrix Entity Mapper
 
-[![PHPUnit](https://github.com/sheerockoff/bitrix-entity-mapper/workflows/PHPUnit/badge.svg)](https://github.com/sheerockoff/bitrix-entity-mapper/actions)
-[![Coverage](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/?branch=master)
-[![Scrutinizer](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sheerockoff/bitrix-entity-mapper/?branch=master)
+[![PHPUnit](https://github.com/bitrix-toolkit/bitrix-entity-mapper/actions/workflows/php-unit.yml/badge.svg)](https://github.com/bitrix-toolkit/bitrix-entity-mapper/actions/workflows/php-unit.yml)
+[![Coverage](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/?branch=master)
+[![Scrutinizer](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/?branch=master)
 
 Альтернативный ORM для Bitrix.
 
 ## Установка
 
 ```bash
-composer require sheerockoff/bitrix-entity-mapper
+composer require bitrix-toolkit/bitrix-entity-mapper
 ```
 
 ## Быстрый старт
@@ -19,9 +19,9 @@ composer require sheerockoff/bitrix-entity-mapper
 ```php
 <?php
 
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
 
 /**
  * @InfoBlock(type="library", code="books", name="Книги")
@@ -69,8 +69,8 @@ CModule::IncludeModule('iblock');
 создадут или изменят необходимый инфоблок и свойства инфоблока для сущности:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\SchemaBuilder;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
 use Entity\Book;
 
 $entityMap = EntityMap::fromClass(Book::class);
@@ -80,7 +80,7 @@ SchemaBuilder::build($entityMap);
 Сохраняем новый объект:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 $book = new Book();
@@ -95,7 +95,7 @@ $bitrixId = EntityMapper::save($book);
 Есть несколько способов перебрать результат:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 $query = EntityMapper::select(Book::class)->where('author', 'Р. Л. Стивенсон');
@@ -120,7 +120,7 @@ $query->fetchAll();
 Получаем результат по фильтру сущности:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 /** @var Book|null $book */
@@ -136,7 +136,7 @@ $books = EntityMapper::select(Book::class)->where('publishedAt', '<', '01.01.190
 Получаем результат по фильтру Bitrix:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 /** @var Book|null $book */
@@ -149,7 +149,7 @@ $books = EntityMapper::select(Book::class)->whereRaw('ACTIVE', 'Y')->fetchAll();
 Сортируем выборку:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 /** @var Book|null $book */
@@ -159,7 +159,7 @@ $book = EntityMapper::select(Book::class)->orderBy('publishedAt', 'desc')->fetch
 Обновляем существующий объект:
 
 ```php
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
 use Entity\Book;
 
 /** @var Book|null $existBook */

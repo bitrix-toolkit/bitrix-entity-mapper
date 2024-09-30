@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test;
+namespace BitrixToolkit\BitrixEntityMapper\Test;
 
 use Bitrix\Main\Data\StaticHtmlCache;
 use Bitrix\Main\Localization\CultureTable;

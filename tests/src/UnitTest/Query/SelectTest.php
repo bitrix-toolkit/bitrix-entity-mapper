@@ -1,14 +1,14 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest\Query;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Query\Select;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Query\Select;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class SelectTest extends TestCase
 {

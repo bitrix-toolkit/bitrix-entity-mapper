@@ -1,11 +1,11 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest\Annotation\Property;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest\Annotation\Property;
 
 use ReflectionClass;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class FieldTest extends TestCase
 {

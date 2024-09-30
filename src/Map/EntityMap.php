@@ -1,13 +1,13 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Map;
+namespace BitrixToolkit\BitrixEntityMapper\Map;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Annotation\AnnotationReader;
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Annotation\AnnotationReader;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
 
 class EntityMap
 {

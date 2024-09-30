@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Annotation;
+namespace BitrixToolkit\BitrixEntityMapper\Annotation;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader as DoctrineAnnotationReader;

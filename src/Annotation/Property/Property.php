@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Annotation\Property;
+namespace BitrixToolkit\BitrixEntityMapper\Annotation\Property;
 
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Annotations\Annotation\Required;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\FunctionalTest;
 
 use CModule;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class BitrixEnvironmentTest extends TestCase
 {

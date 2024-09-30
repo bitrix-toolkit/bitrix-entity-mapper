@@ -1,12 +1,12 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use InvalidArgumentException;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\EntityMapper;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\EntityMapper;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class EntityMapperTest extends TestCase
 {

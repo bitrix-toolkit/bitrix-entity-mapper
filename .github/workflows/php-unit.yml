@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        PHP: [ "7.3", "7.4", "8.0", "8.1", "8.2" ]
+        PHP: [ "7.3", "7.4", "8.0", "8.1", "8.2", "8.3" ]
         Bitrix: [ "18.5", "19.0", "20.0", "20.5", "21.400", "22.600" ]
         exclude:
           - { PHP: "7.3", Bitrix: "22.600" }
@@ -24,6 +24,11 @@ jobs:
           - { PHP: "8.2", Bitrix: "20.0" }
           - { PHP: "8.2", Bitrix: "20.5" }
           - { PHP: "8.2", Bitrix: "21.400" }
+          - { PHP: "8.3", Bitrix: "18.5" }
+          - { PHP: "8.3", Bitrix: "19.0" }
+          - { PHP: "8.3", Bitrix: "20.0" }
+          - { PHP: "8.3", Bitrix: "20.5" }
+          - { PHP: "8.3", Bitrix: "21.400" }
     container:
       image: webdevops/php-dev:${{ matrix.PHP }}
       env:
@@ -43,7 +48,7 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v1
-      
+
       - name: Fix for https://github.com/actions/runner-images/issues/6775
         run: |
           chown root:root .
@@ -55,17 +60,18 @@ jobs:
           echo 'mbstring.func_overload=2' >> /opt/docker/etc/php/php.ini
           cat /opt/docker/etc/php/php.ini
 
-      - name: Install dependencies
-        run: composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
-
       - name: Install Bitrix CI
-        run: composer require sheerockoff/bitrix-ci:${{ matrix.Bitrix }} --dev --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
+        run: composer require bitrix-toolkit/bitrix-ci:${{ matrix.Bitrix }} --dev --no-ansi --no-interaction --no-progress --prefer-dist
+
+      - name: Install dependencies
+        run: composer install --no-ansi --no-interaction --no-progress --prefer-dist
 
       - name: Run PHPUnit tests
         run: XDEBUG_MODE=coverage vendor/bin/phpunit --whitelist src/ --coverage-text --coverage-clover clover.xml
 
       - name: Upload coverage to https://scrutinizer-ci.com
         if: matrix.PHP == '7.4' && matrix.Bitrix == '21.400'
+        continue-on-error: true
         run: |
           wget -nv https://scrutinizer-ci.com/ocular.phar
           php ocular.phar code-coverage:upload --format=php-clover clover.xml

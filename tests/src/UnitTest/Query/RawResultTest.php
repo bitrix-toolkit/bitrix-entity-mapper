@@ -1,17 +1,17 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest\Query;
 
 use DateTime;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
-use Sheerockoff\BitrixEntityMapper\Query\RawResult;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Query\RawResult;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 use stdClass;
 
 final class RawResultTest extends TestCase

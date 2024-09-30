@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\FunctionalTest;
 
 use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlock;
@@ -12,10 +12,10 @@ use Entity\Author;
 use Entity\Book;
 use Generator;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Query\Select;
-use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Query\Select;
+use BitrixToolkit\BitrixEntityMapper\SchemaBuilder;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class SelectTest extends TestCase
 {

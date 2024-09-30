@@ -2,8 +2,8 @@
 
 namespace Entity;
 
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
 
 /**
  * @InfoBlock(type="test_entity", code="authors", name="Авторы")

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Annotation\Property;
+namespace BitrixToolkit\BitrixEntityMapper\Annotation\Property;
 
 abstract class AbstractPropertyAnnotation implements PropertyAnnotationInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Query;
 
 use _CIBElement;
 use CIBlockElement;
@@ -12,10 +12,10 @@ use Iterator;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionObject;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
 
 class Select implements Iterator
 {

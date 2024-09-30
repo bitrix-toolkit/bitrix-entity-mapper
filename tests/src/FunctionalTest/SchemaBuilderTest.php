@@ -2,7 +2,7 @@
 
 /** @noinspection PhpUndefinedClassInspection */
 
-namespace Sheerockoff\BitrixEntityMapper\Test\FunctionalTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\FunctionalTest;
 
 use CDBResult;
 use CIBlock;
@@ -12,9 +12,9 @@ use CIBlockPropertyResult;
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\SchemaBuilder;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class SchemaBuilderTest extends TestCase
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Test\UnitTest;
+namespace BitrixToolkit\BitrixEntityMapper\Test\UnitTest;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Entity\Book;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Entity\InfoBlock;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\SchemaBuilder;
-use Sheerockoff\BitrixEntityMapper\Test\TestCase;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Entity\InfoBlock;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\SchemaBuilder;
+use BitrixToolkit\BitrixEntityMapper\Test\TestCase;
 
 final class SchemaBuilderTest extends TestCase
 {

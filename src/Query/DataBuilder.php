@@ -1,6 +1,6 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Query;
+namespace BitrixToolkit\BitrixEntityMapper\Query;
 
 use Bitrix\Main\Type\DateTime as BitrixDateTime;
 use CIBlock;
@@ -8,11 +8,11 @@ use CIBlockProperty;
 use DateTime;
 use Exception;
 use InvalidArgumentException;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Field;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\Property;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
-use Sheerockoff\BitrixEntityMapper\Map\EntityMap;
-use Sheerockoff\BitrixEntityMapper\Map\PropertyMap;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Field;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\Property;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
+use BitrixToolkit\BitrixEntityMapper\Map\EntityMap;
+use BitrixToolkit\BitrixEntityMapper\Map\PropertyMap;
 
 class DataBuilder
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Sheerockoff\BitrixEntityMapper\Map;
+namespace BitrixToolkit\BitrixEntityMapper\Map;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use InvalidArgumentException;
 use ReflectionProperty;
-use Sheerockoff\BitrixEntityMapper\Annotation\AnnotationReader;
-use Sheerockoff\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
+use BitrixToolkit\BitrixEntityMapper\Annotation\AnnotationReader;
+use BitrixToolkit\BitrixEntityMapper\Annotation\Property\PropertyAnnotationInterface;
 
 class PropertyMap
 {
