@@ -4,7 +4,7 @@
 [![Coverage](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/?branch=master)
 [![Scrutinizer](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/bitrix-toolkit/bitrix-entity-mapper/?branch=master)
 
-Альтернативный ORM для Bitrix.
+Декларативный ORM для инфоблоков Bitrix.
 
 ## Установка
 
